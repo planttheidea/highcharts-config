@@ -13,15 +13,13 @@ import HighchartsSolidGauge from 'highcharts/modules/solid-gauge';
 import buildConfig from '../src/index';
 
 buildConfig
-  .addChartMethod('logConfig', function() {
-    console.log('config', this);
+  .addChartMethod('logConfig', (config) => {
+    console.log('config', config);
 
-    return this;
+    return config;
   })
-  .addChartMethod('logFoo', function() {
+  .addChartMethod('logFoo', () => {
     console.log('foo');
-
-    return this;
   });
 
 HighchartsMore(Highcharts);

@@ -9,6 +9,7 @@ import set from 'lodash/fp/set';
 
 // utils
 import {
+  createAddMethodWrapper,
   createPropertyConvenienceMethod,
   getNewConfigFromObject
 } from '../utils';
@@ -72,12 +73,15 @@ class Config {
    * @description
    * add a convenience method to the constructor passed
    *
-   * @param {ChartConfig|OptionsConfig} Constructor constructor to assign method to
+   * @param {function} Constructor constructor to assign method to prototype of
+   * @param {Object} Constructor.prototype prototype to assign method to
    * @returns {function(string, (function|number)): (ChartConfig|OptionsConfig)} method to add convenience method
    */
   static addMethod(Constructor) {
     return (methodName, method) => {
-      const methodToAssign = isFunction(method) ? method : createPropertyConvenienceMethod(methodName);
+      const methodToAssign = isFunction(method) ?
+        createAddMethodWrapper(Constructor, method) :
+        createPropertyConvenienceMethod(methodName);
 
       Object.defineProperty(Constructor.prototype, methodName, {
         configurable: false,

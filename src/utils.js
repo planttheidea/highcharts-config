@@ -37,6 +37,25 @@ export const createAddMethod = (Constructor, buildConfig) => {
 };
 
 /**
+ * @function createAddMethodWrapper
+ *
+ * @description
+ * create wrapper for method to ensure chainability
+ *
+ * @param {function} Constructor constructor to assign method to
+ * @param {function} method method to execute in chain
+ * @returns {function(): (ChartConfig|OptionsConfig)} new configuration class
+ */
+export const createAddMethodWrapper = function(Constructor, method) {
+  return function() {
+    const result = method.call(this, this.config, this);
+    const config = isPlainObject(result) ? result : this.config;
+
+    return new Constructor(config, this.options);
+  };
+};
+
+/**
  * @function createBuildConfig
  *
  * @description
