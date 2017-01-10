@@ -1,0 +1,69 @@
+{
+  "author": "planttheidea",
+  "bugs": {
+    "url": "https://github.com/planttheidea/highcharts-config/issues"
+  },
+  "dependencies": {
+    "lodash": "^4.17.4"
+  },
+  "description": "Declarative Highcharts configuration generator with immutable, chainable API",
+  "devDependencies": {
+    "ava": "^0.17.0",
+    "babel": "^6.5.2",
+    "babel-cli": "^6.18.0",
+    "babel-eslint": "^7.1.1",
+    "babel-loader": "^6.2.10",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-plugin-transform-decorators-legacy": "^1.3.4",
+    "babel-polyfill": "^6.20.0",
+    "babel-preset-latest": "^6.16.0",
+    "babel-preset-react": "^6.16.0",
+    "babel-preset-stage-2": "^6.18.0",
+    "babel-register": "^6.18.0",
+    "eslint": "^3.13.1",
+    "eslint-config-rapid7": "^2.6.0",
+    "eslint-friendly-formatter": "^2.0.7",
+    "eslint-loader": "^1.6.1",
+    "highcharts": "^5.0.6",
+    "html-webpack-plugin": "^2.26.0",
+    "in-publish": "^2.0.0",
+    "lodash-webpack-plugin": "^0.10.7",
+    "nyc": "^10.0.0",
+    "optimize-js-plugin": "^0.0.4",
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2",
+    "remeasure": "^2.0.1",
+    "sinon": "^1.17.7",
+    "webpack": "^1.14.0",
+    "webpack-dashboard": "^0.2.1",
+    "webpack-dev-server": "^1.16.2"
+  },
+  "homepage": "https://github.com/planttheidea/highcharts-config#readme",
+  "keywords": [
+    "highcharts"
+  ],
+  "license": "MIT",
+  "main": "lib/index.js",
+  "name": "highcharts-config",
+  "peerDependencies": {
+    "highcharts": "^5.0.6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/planttheidea/highcharts-config.git"
+  },
+  "scripts": {
+    "build": "NODE_ENV=development webpack --progress --colors",
+    "build:minified": "NODE_ENV=production webpack --progress --colors --config=webpack.config.minified.js",
+    "dev": "NODE_ENV=development webpack-dashboard -p 3210 -- webpack-dev-server --colors --config=webpack.config.dev.js",
+    "lint": "NODE_ENV=test eslint src",
+    "prepublish": "in-publish && npm run prepublish:compile || echo ''",
+    "prepublish:compile": "npm run lint && npm run test:coverage && npm run transpile && npm run build && npm run build:minified",
+    "start": "npm run dev",
+    "test": "NODE_ENV=test ava --no-cache",
+    "test:coverage": "nyc npm test",
+    "test:watch": "NODE_ENV=test ava --watch",
+    "transpile": "babel src --out-dir lib"
+  },
+  "version": "1.0.0"
+}
