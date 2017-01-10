@@ -10,7 +10,19 @@ import HighchartsExporting from 'highcharts/modules/exporting';
 import HighchartsHeatmap from 'highcharts/modules/heatmap';
 import HighchartsSolidGauge from 'highcharts/modules/solid-gauge';
 
-import createConfig from '../src/index';
+import buildConfig from '../src/index';
+
+buildConfig
+  .addChartMethod('logConfig', function() {
+    console.log('config', this);
+
+    return this;
+  })
+  .addChartMethod('logFoo', function() {
+    console.log('foo');
+
+    return this;
+  });
 
 HighchartsMore(Highcharts);
 HighchartsExporting(Highcharts);
@@ -85,7 +97,7 @@ const FRUIT_CONSUMPTION_BREAKDOWN_DATA = {
 };
 const SPEED_DATA = {
   name: 'Speed',
-  data: [80],
+  data: [0],
   dataLabels: {
     format: '<div style="text-align:center;width:100px"><span style="font-size:36px;color:black">{y}</span><br/>' +
       '<span style="font-size:12px;color:silver">km/h</span></div>'
@@ -142,8 +154,9 @@ const EMPLOYEE_SALES_DATA = {
   }
 };
 
-const defaultConfig = createConfig()
+const defaultConfig = buildConfig()
   .colors([BLUE, RED, GREEN, YELLOW])
+  .logConfig()
   .legend({
     align: 'right',
     borderWidth: 0,
@@ -192,6 +205,7 @@ const mixtureConfig = defaultConfig
 const gaugeConfig = defaultConfig
   .credits('enabled', false)
   .exporting('enabled', false)
+  .logFoo()
   .pane({
     background: {
       backgroundColor: '#eee',

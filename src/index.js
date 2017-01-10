@@ -1,13 +1,19 @@
 // classes
 import ChartConfig from './classes/ChartConfig';
-import GlobalConfig from './classes/GlobalConfig';
+import OptionsConfig from './classes/OptionsConfig';
+
+// utils
+import {
+  createAddMethod,
+  createBuildConfig
+} from './utils';
 
 /**
  * @module index
  */
 
 /**
- * @function createConfig
+ * @function buildConfig
  *
  * @description
  * create a configuration builder class
@@ -16,34 +22,54 @@ import GlobalConfig from './classes/GlobalConfig';
  * @param {Object} [options={}] additional options for the configuration class
  * @returns {ChartConfig} the configuration class for a given chart
  */
-const createConfig = (config = {}, options = {}) => {
-  return new ChartConfig(config, options);
-};
+const buildConfig = createBuildConfig(ChartConfig);
 
 /**
- * @function createConfig.chart
+ * @function buildConfig.addChartMethod
  *
  * @description
- * create a configuration builder class
+ * add a custom method to the chart config builder
+ *
+ * @param {string} methodName name of the custom method
+ * @param {function} method method to execute in the chain
+ * @returns {function} constructor to add method to
+ */
+buildConfig.addChartMethod = createAddMethod(ChartConfig, buildConfig);
+
+/**
+ * @function buildConfig.addOptionsMethod
+ *
+ * @description
+ * add a custom method to the options config builder
+ *
+ * @param {string} methodName name of the custom method
+ * @param {function} method method to execute in the chain
+ * @returns {function} constructor to add method to
+ */
+buildConfig.addOptionsMethod = createAddMethod(OptionsConfig, buildConfig);
+
+/**
+ * @function buildConfig.chart
+ *
+ * @description
+ * create a configuration builder class for charts
  *
  * @param {Object} [config={}] configuration to assign
  * @param {Object} [options={}] additional options for the configuration class
  * @returns {ChartConfig} the configuration class for a given chart
  */
-createConfig.chart = createConfig;
+buildConfig.chart = createBuildConfig(ChartConfig);
 
 /**
- * @function createConfig.global
+ * @function buildConfig.options
  *
  * @description
- * create a configuration builder class
+ * create a configuration builder class for options
  *
  * @param {Object} [config={}] configuration to assign
  * @param {Object} [options={}] additional options for the configuration class
- * @returns {ChartConfig} the configuration class for global options
+ * @returns {OptionsConfig} the configuration class for options
  */
-createConfig.global = (config = {}, options = {}) => {
-  return new GlobalConfig(config, options);
-};
+buildConfig.options = createBuildConfig(OptionsConfig);
 
-export default createConfig;
+export default buildConfig;

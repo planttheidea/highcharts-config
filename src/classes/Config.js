@@ -9,8 +9,8 @@ import set from 'lodash/fp/set';
 
 // utils
 import {
-  getNewConfigFromObject,
-  toString
+  createPropertyConvenienceMethod,
+  getNewConfigFromObject
 } from '../utils';
 
 /**
@@ -66,6 +66,33 @@ class Config {
   options = null;
 
   /**
+   * @function addConvenienceMethod
+   * @static
+   *
+   * @description
+   * add a convenience method to the constructor passed
+   *
+   * @param {ChartConfig|OptionsConfig} constructor constructor to assign method to
+   * @returns {function(string, (function|number)): (ChartConfig|OptionsConfig)} method to add convenience method
+   */
+  static addMethod(constructor) {
+    return (methodName, method) => {
+      if (!isFunction(method)) {
+        method = createPropertyConvenienceMethod(methodName);
+      }
+
+      Object.defineProperty(constructor.prototype, methodName, {
+        configurable: false,
+        enumerable: false,
+        value: method,
+        writable: true
+      });
+
+      return constructor;
+    };
+  }
+
+  /**
    * @function get
    *
    * @description
@@ -85,7 +112,7 @@ class Config {
    * remove item at path (top-level or nested) in the config
    *
    * @param {string} path path to remove from config
-   * @returns {GlobalConfig} new config class
+   * @returns {Config} new config class
    */
   remove(path) {
     const keys = isArray(path) ? path : [path];
@@ -99,7 +126,7 @@ class Config {
    *
    * @param {string} path path to set in config
    * @param {*} value value to assign to path
-   * @returns {GlobalConfig} new config class
+   * @returns {Config} new config class
    */
   set(path, value) {
     const config = isPlainObject(path) ? getNewConfigFromObject(this.config, path) : set(path, value, this.config);
@@ -116,7 +143,7 @@ class Config {
    * @returns {string} stringified config
    */
   toString() {
-    return toString(this.config);
+    return JSON.stringify(this.config, null, 2);
   }
 }
 

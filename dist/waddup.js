@@ -4977,7 +4977,7 @@ var waddup =
 	 * @type {Array<string>}
 	 * @default
 	 */
-	var GLOBAL_CONVENIENCE_METHOD_NAMES = exports.GLOBAL_CONVENIENCE_METHOD_NAMES = ['global', 'lang'];
+	var OPTIONS_CONVENIENCE_METHOD_NAMES = exports.OPTIONS_CONVENIENCE_METHOD_NAMES = ['global', 'lang'];
 	
 	/**
 	 * @constant
@@ -5039,7 +5039,7 @@ var waddup =
 	  return GlobalConfig;
 	}(_Config3.default);
 	
-	_constants.GLOBAL_CONVENIENCE_METHOD_NAMES.forEach(function (method) {
+	_constants.OPTIONS_CONVENIENCE_METHOD_NAMES.forEach(function (method) {
 	  Object.defineProperty(GlobalConfig.prototype, method, {
 	    configurable: false,
 	    enumerable: false,
