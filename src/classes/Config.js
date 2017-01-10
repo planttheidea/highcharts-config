@@ -72,23 +72,23 @@ class Config {
    * @description
    * add a convenience method to the constructor passed
    *
-   * @param {ChartConfig|OptionsConfig} constructor constructor to assign method to
+   * @param {ChartConfig|OptionsConfig} Constructor constructor to assign method to
    * @returns {function(string, (function|number)): (ChartConfig|OptionsConfig)} method to add convenience method
    */
-  static addMethod(constructor) {
+  static addMethod(Constructor) {
     return (methodName, method) => {
       if (!isFunction(method)) {
         method = createPropertyConvenienceMethod(methodName);
       }
 
-      Object.defineProperty(constructor.prototype, methodName, {
+      Object.defineProperty(Constructor.prototype, methodName, {
         configurable: false,
         enumerable: false,
         value: method,
         writable: true
       });
 
-      return constructor;
+      return Constructor;
     };
   }
 
