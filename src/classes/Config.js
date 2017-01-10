@@ -77,14 +77,12 @@ class Config {
    */
   static addMethod(Constructor) {
     return (methodName, method) => {
-      if (!isFunction(method)) {
-        method = createPropertyConvenienceMethod(methodName);
-      }
+      const methodToAssign = isFunction(method) ? method : createPropertyConvenienceMethod(methodName);
 
       Object.defineProperty(Constructor.prototype, methodName, {
         configurable: false,
         enumerable: false,
-        value: method,
+        value: methodToAssign,
         writable: true
       });
 
