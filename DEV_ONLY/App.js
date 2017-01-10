@@ -191,6 +191,7 @@ const mixtureConfig = defaultConfig
 
 const gaugeConfig = defaultConfig
   .credits('enabled', false)
+  .exporting('enabled', false)
   .pane({
     background: {
       backgroundColor: '#eee',
@@ -229,8 +230,6 @@ const gaugeConfig = defaultConfig
     }
   })
   .addChart('solidgauge', SPEED_DATA);
-
-console.log(gaugeConfig);
 
 const boxplotConfig = defaultConfig
   .title('text', 'Box Plot')
