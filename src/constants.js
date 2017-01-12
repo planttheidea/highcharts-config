@@ -39,7 +39,7 @@ export const CHART_CONVENIENCE_METHOD_NAMES = [
  * @type {Array<string>}
  * @default
  */
-export const GLOBAL_CONVENIENCE_METHOD_NAMES = [
+export const OPTIONS_CONVENIENCE_METHOD_NAMES = [
   'global',
   'lang'
 ];

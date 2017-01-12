@@ -11,7 +11,6 @@ import {
 
 // utils
 import {
-  createPropertyConvenienceMethod,
   getNewChartSeries,
   getNewConfigWithSeries
 } from '../utils';
@@ -43,13 +42,6 @@ class ChartConfig extends Config {
   }
 }
 
-CHART_CONVENIENCE_METHOD_NAMES.forEach((method) => {
-  Object.defineProperty(ChartConfig.prototype, method, {
-    configurable: false,
-    enumerable: false,
-    value: createPropertyConvenienceMethod(method),
-    writable: true
-  });
-});
+CHART_CONVENIENCE_METHOD_NAMES.forEach(ChartConfig.addMethod(ChartConfig));
 
 export default ChartConfig;

@@ -1,8 +1,8 @@
 // external dependencies
 import get from 'lodash/fp/get';
 import isArray from 'lodash/isArray';
+import isFunction from 'lodash/isFunction';
 import isPlainObject from 'lodash/isPlainObject';
-import isString from 'lodash/isString';
 import set from 'lodash/fp/set';
 
 // constants
@@ -13,6 +13,62 @@ import {
 /**
  * @module utils
  */
+
+/**
+ * @function createAddMethod
+ *
+ * @description
+ * create an add method function for specific constructor
+ * @param {function} Constructor constructor to assign method to
+ * @param {function} Constructor.addMethod static method to add method to Constructor
+ * @param {function} buildConfig main function, returned to allow chainability
+ * @returns {function(string, function): function} add method to Constructor
+ */
+export const createAddMethod = (Constructor, buildConfig) => {
+  return (methodName, method) => {
+    if (!isFunction(method)) {
+      throw new TypeError('The second parameter needs to be a function.');
+    }
+
+    Constructor.addMethod(Constructor)(methodName, method);
+
+    return buildConfig;
+  };
+};
+
+/**
+ * @function createAddMethodWrapper
+ *
+ * @description
+ * create wrapper for method to ensure chainability
+ *
+ * @param {function} Constructor constructor to assign method to
+ * @param {function} method method to execute in chain
+ * @returns {function(): (ChartConfig|OptionsConfig)} new configuration class
+ */
+export const createAddMethodWrapper = function(Constructor, method) {
+  return function() {
+    const result = method.call(this, this.config, this);
+    const config = isPlainObject(result) ? result : this.config;
+
+    return new Constructor(config, this.options);
+  };
+};
+
+/**
+ * @function createBuildConfig
+ *
+ * @description
+ * create a buildConfig function specific to a constructor
+ *
+ * @param {function} Constructor constructor to call with config and options
+ * @returns {function(Object, Object): (ChartConfig|OptionsConfig)}
+ */
+export const createBuildConfig = (Constructor) => {
+  return (config = {}, options = {}) => {
+    return new Constructor(config, options);
+  };
+};
 
 /**
  * @function getDefaultSeries
@@ -116,19 +172,19 @@ export const createPropertyConvenienceMethod = (property) => {
 export const isMixedChartType = (series) => {
   const length = series.length;
 
+  if (!length) {
+    return false;
+  }
+
   let index = -1,
-      currentType,
-      type;
+      type = series[0].type,
+      currentType;
 
   while (++index < length) {
     currentType = series[index].type;
 
     if (currentType !== type) {
-      if (isString(type)) {
-        return true;
-      }
-
-      type = currentType;
+      return true;
     }
   }
 
@@ -148,9 +204,9 @@ export const isMixedChartType = (series) => {
 export const getNewChartSeries = (series, type) => {
   return series.map((seriesInstance) => {
     return seriesInstance.type ? seriesInstance : {
-        ...seriesInstance,
-        type
-      };
+      ...seriesInstance,
+      type
+    };
   });
 };
 
@@ -192,17 +248,4 @@ export const getNewConfigWithSeries = (config, type, series) => {
   }
 
   return set('series', updatedSeries, config);
-};
-
-/**
- * @function toString
- *
- * @description
- * stringify the configuration object in a formatted way
- *
- * @param {Object} config current configuration of the given instance
- * @returns {string} stringified configuration
- */
-export const toString = (config) => {
-  return JSON.stringify(config, null, 2);
 };
