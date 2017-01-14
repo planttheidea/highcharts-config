@@ -311,20 +311,21 @@ export const getNewConfigWithSeries = (config, type, series) => {
  * @returns {Object} object with values at paths removed
  */
 export const removeOrOmit = (paths, object) => {
-  let pathArray, finalIndex, parent, value, indexToRemove;
+  let pathArray, finalIndex, initialPath, parent, value, indexToMatch;
 
   return paths.reduce((updatedObject, path) => {
     pathArray = toPath(path);
-    finalIndex = pathArray.pop();
-    parent = get(pathArray, updatedObject);
+    finalIndex = pathArray.length - 1;
+    initialPath = pathArray.slice(0, finalIndex);
+    parent = get(initialPath, updatedObject);
 
     if (isArray(parent)) {
-      indexToRemove = ~~pathArray[finalIndex];      
+      indexToMatch = ~~pathArray[finalIndex];
       value = parent.filter((value, index) => {
-        return index !== indexToRemove;
+        return index !== indexToMatch;
       });
 
-      return set(pathArray, value, updatedObject);
+      return set(initialPath, value, updatedObject);
     }
 
     return omit([path], updatedObject);
