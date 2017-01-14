@@ -11,6 +11,8 @@ import {
  */
 
 /**
+ * @private
+ *
  * @class OptionsConfig
  * @classdesc configuration object builder for global options
  */

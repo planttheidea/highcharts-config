@@ -181,9 +181,10 @@ const splineConfig = defaultConfig
   .yAxis('title.text', 'Temperature (C)')
   .tooltip('valueSuffix', 'C')
   .addChart('spline', TOKYO_TEMPERATURE_DATA)
-  .addChart('spline', BERLIN_TEMPERATURE_DATA)
+  .addChart('line', BERLIN_TEMPERATURE_DATA)
   .addChart('spline', LONDON_TEMPERATURE_DATA)
-  .addChart('spline', NEW_YORK_TEMPERATURE_DATA);
+  .addChart('spline', NEW_YORK_TEMPERATURE_DATA)
+  .removeChart('spline[1]');
 
 const mixtureConfig = defaultConfig
   .title('text', 'Combination chart')

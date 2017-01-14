@@ -1,9 +1,11 @@
 // external dependencies
 import get from 'lodash/fp/get';
-import isArray from 'lodash/isArray';
-import isFunction from 'lodash/isFunction';
-import isPlainObject from 'lodash/isPlainObject';
+import isArray from 'lodash/fp/isArray';
+import isFunction from 'lodash/fp/isFunction';
+import isPlainObject from 'lodash/fp/isPlainObject';
+import omit from 'lodash/fp/omit';
 import set from 'lodash/fp/set';
+import toPath from 'lodash/fp/toPath';
 
 // constants
 import {
@@ -15,6 +17,8 @@ import {
  */
 
 /**
+ * @private
+ *
  * @function createAddMethod
  *
  * @description
@@ -37,6 +41,8 @@ export const createAddMethod = (Constructor, buildConfig) => {
 };
 
 /**
+ * @private
+ *
  * @function createAddMethodWrapper
  *
  * @description
@@ -56,6 +62,8 @@ export const createAddMethodWrapper = function(Constructor, method) {
 };
 
 /**
+ * @private
+ *
  * @function createBuildConfig
  *
  * @description
@@ -71,6 +79,25 @@ export const createBuildConfig = (Constructor) => {
 };
 
 /**
+ * @private
+ *
+ * @function getConfig
+ *
+ * @description
+ * curried function to get the config object based on if it is a Config or not
+ *
+ * @param {function} Config base config class
+ * @returns {function(*): Object} function to retrieve the config object
+ */
+export const getConfig = (Config) => {
+  return (config) => {
+    return config instanceof Config ? config.get() : config;
+  };
+};
+
+/**
+ * @private
+ *
  * @function getDefaultSeries
  * 
  * @description
@@ -98,6 +125,8 @@ export const getNamespacedKey = (key, namespace) => {
 };
 
 /**
+ * @private
+ *
  * @function canCombineChartTypes
  *
  * @description
@@ -107,20 +136,14 @@ export const getNamespacedKey = (key, namespace) => {
  * @returns {boolean} does the series allow for combination of all the charts added
  */
 export const canCombineChartTypes = (series) => {
-  const length = series.length;
-
-  let index = -1;
-
-  while (++index < length) {
-    if (!!~CHARTS_UNABLE_TO_BE_MIXED.indexOf(series[index].type)) {
-      return false;
-    }
-  }
-
-  return true;
+  return series.every(({type}) => {
+    return !~CHARTS_UNABLE_TO_BE_MIXED.indexOf(type);
+  });
 };
 
 /**
+ * @private
+ *
  * @function createPropertyConvenienceMethod
  *
  * @description
@@ -161,6 +184,8 @@ export const createPropertyConvenienceMethod = (property) => {
 };
 
 /**
+ * @private
+ *
  * @function isMixedChartType
  *
  * @description
@@ -170,28 +195,45 @@ export const createPropertyConvenienceMethod = (property) => {
  * @returns {boolean} are multiple chart types present
  */
 export const isMixedChartType = (series) => {
-  const length = series.length;
-
-  if (!length) {
+  if (!series.length) {
     return false;
   }
 
-  let index = -1,
-      type = series[0].type,
-      currentType;
+  const [
+    firstItem,
+    ...restOfSeries
+  ] = series;
+  const originalType = firstItem.type;
 
-  while (++index < length) {
-    currentType = series[index].type;
-
-    if (currentType !== type) {
-      return true;
-    }
-  }
-
-  return false;
+  return restOfSeries.some(({type}) => {
+    return type !== originalType;
+  });
 };
 
 /**
+ * @private
+ *
+ * @function getMatchingChartIndices
+ *
+ * @description
+ * get the indices of the series where the type is the same as the chart passed
+ *
+ * @param {Array<Object>} series the series to get the indices from
+ * @param {string} chart the chart to match indices of
+ * @returns {Array<T>}
+ */
+export const getMatchingChartIndices = (series, chart) => {
+  return series.reduce((indices, {type}, seriesIndex) => {
+    return type !== chart ? indices : [
+      ...indices,
+      seriesIndex
+    ];
+  }, []);
+};
+
+/**
+ * @private
+ *
  * @function getNewChartSeries
  *
  * @description
@@ -211,6 +253,8 @@ export const getNewChartSeries = (series, type) => {
 };
 
 /**
+ * @private
+ *
  * @function getNewConfigFromObject
  *
  * @description
@@ -227,6 +271,8 @@ export const getNewConfigFromObject = (currentConfig, object) => {
 };
 
 /**
+ * @private
+ *
  * @function getNewConfigWithSeries
  *
  * @description
@@ -248,4 +294,37 @@ export const getNewConfigWithSeries = (config, type, series) => {
   }
 
   return set('series', updatedSeries, config);
+};
+
+/**
+ * @private
+ *
+ * @function removeOrOmit
+ *
+ * @description
+ * remove deeply-nested item from object based on whether it is an array or object
+ *
+ * @param {Array<string>} paths list of paths to remove
+ * @param {Object} object object to remove values at paths from
+ * @returns {Object} object with values at paths removed
+ */
+export const removeOrOmit = (paths, object) => {
+  let pathArray, finalIndex, initialPath, parent, value;
+
+  return paths.reduce((updatedObject, path) => {
+    pathArray = toPath(path);
+    finalIndex = pathArray.length - 1;
+    initialPath = pathArray.slice(0, finalIndex);
+    parent = get(initialPath, updatedObject);
+
+    if (isArray(parent)) {
+      value = parent.filter((value, index) => {
+        return index !== ~~pathArray[finalIndex];
+      });
+
+      return set(initialPath, value, updatedObject);
+    }
+
+    return omit([path], updatedObject);
+  }, object);
 };

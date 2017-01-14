@@ -9,7 +9,7 @@ import {
 } from './utils';
 
 /**
- * @module index
+ * @module buildConfig
  */
 
 /**
@@ -17,6 +17,19 @@ import {
  *
  * @description
  * create a configuration builder class
+ *
+ * @example
+ * import buildConfig from 'highcharts-config';
+ *
+ * const config = buildConfig()
+ *   .addChart('line', {
+ *     data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6],
+ *     name: 'Stuff'
+ *   })
+ *   .get();
+ *
+ * console.log(config);
+ * // {series: [{data: [...], name: 'Stuff', type: 'line'}]}
  *
  * @param {Object} [config={}] configuration to assign
  * @param {Object} [options={}] additional options for the configuration class
@@ -53,6 +66,19 @@ buildConfig.addOptionsMethod = createAddMethod(OptionsConfig, buildConfig);
  *
  * @description
  * create a configuration builder class for charts
+ *
+ * @example
+ * import buildConfig from 'highcharts-config';
+ *
+ * const config = buildConfig()
+ *   .addChart('line', {
+ *     data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6],
+ *     name: 'Stuff'
+ *   })
+ *   .get();
+ *
+ * console.log(config);
+ * // {series: [{data: [...], name: 'Stuff', type: 'line'}]}
  *
  * @param {Object} [config={}] configuration to assign
  * @param {Object} [options={}] additional options for the configuration class

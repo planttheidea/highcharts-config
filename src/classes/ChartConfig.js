@@ -1,5 +1,8 @@
 // external dependencies
-import isPlainObject from 'lodash/isPlainObject';
+import isNAN from 'lodash/fp/isNaN';
+import isPlainObject from 'lodash/fp/isPlainObject';
+import isUndefined from 'lodash/fp/isUndefined';
+import toPath from 'lodash/fp/toPath';
 
 // classes
 import Config from './Config';
@@ -11,6 +14,7 @@ import {
 
 // utils
 import {
+  getMatchingChartIndices,
   getNewChartSeries,
   getNewConfigWithSeries
 } from '../utils';
@@ -20,6 +24,8 @@ import {
  */
 
 /**
+ * @private
+ *
  * @class ChartConfig
  * @classdesc configuration object builder for charts
  */
@@ -39,6 +45,52 @@ class ChartConfig extends Config {
     const config = getNewConfigWithSeries(this.config, type, getNewChartSeries(series, type));
 
     return new ChartConfig(config, this.options);
+  }
+
+  /**
+   * @function removeChart
+   *
+   * @description
+   * remove an instance of a chart type, all instances, or all charts
+   *
+   * @param {string} [chartPath] chart type with optional index
+   * @returns {ChartConfig} new config class
+   */
+  removeChart(chartPath) {
+    if (isUndefined(chartPath)) {
+      return this.remove('series');
+    }
+
+    const {
+      series: currentSeries = []
+    } = this.config;
+
+    if (!currentSeries.length) {
+      return this;
+    }
+
+    const [
+      chart,
+      indexString
+    ] = toPath(chartPath);
+
+    if (isUndefined(indexString)) {
+      const series = currentSeries.filter(({type}) => {
+        return type !== chart;
+      });
+
+      return this.set('series', series);
+    }
+
+    const chartIndices = getMatchingChartIndices(currentSeries, chart);
+    const indexNumber = +indexString;
+    const indexToRemove = chartIndices[isNAN(indexNumber) ? 0 : indexNumber];
+
+    if (isUndefined(indexToRemove)) {
+      return this;
+    }
+
+    return this.remove(`series[${indexToRemove}]`);
   }
 }
 

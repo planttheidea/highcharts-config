@@ -1,17 +1,19 @@
 // external dependencies
 import get from 'lodash/fp/get';
-import isArray from 'lodash/isArray';
-import isFunction from 'lodash/isFunction';
-import isPlainObject from 'lodash/isPlainObject';
-import isUndefined from 'lodash/isUndefined';
-import omit from 'lodash/fp/omit';
+import isArray from 'lodash/fp/isArray';
+import isFunction from 'lodash/fp/isFunction';
+import isPlainObject from 'lodash/fp/isPlainObject';
+import isUndefined from 'lodash/fp/isUndefined';
+import merge from 'lodash/fp/merge';
 import set from 'lodash/fp/set';
 
 // utils
 import {
   createAddMethodWrapper,
   createPropertyConvenienceMethod,
-  getNewConfigFromObject
+  getConfig,
+  getNewConfigFromObject,
+  removeOrOmit
 } from '../utils';
 
 /**
@@ -19,6 +21,8 @@ import {
  */
 
 /**
+ * @private
+ *
  * @class Config
  * @classdesc configuration object builder base class
  */
@@ -34,7 +38,7 @@ class Config {
    * @returns {Config} configuration class
    */
   constructor(config = {}, options = {}) {
-    this.config = {...config};
+    this.config = getConfig(Config)(config);
     this.options = {...options};
 
     const {
@@ -95,6 +99,18 @@ class Config {
   }
 
   /**
+   * @function clear
+   *
+   * @description
+   * clear out the current config and start anew
+   *
+   * @returns {Config} new config class
+   */
+  clear() {
+    return new this.constructor({}, this.options);
+  }
+
+  /**
    * @function get
    *
    * @description
@@ -108,17 +124,34 @@ class Config {
   }
 
   /**
+   * @function merge
+   *
+   * @description
+   * merge the configs passed to form a new config
+   *
+   * @returns {Config} new config class
+   */
+  merge(...otherConfigs) {
+    const configs = otherConfigs.map(getConfig(Config));
+
+    const config = merge(this.config, ...configs);
+
+    return new this.constructor(config, this.options);
+  }
+
+  /**
    * @function remove
    *
    * @description
    * remove item at path (top-level or nested) in the config
    *
-   * @param {string} path path to remove from config
+   * @param {string} paths path to remove from config
    * @returns {Config} new config class
    */
-  remove(path) {
-    const keys = isArray(path) ? path : [path];
-    const config = omit(keys, this.config);
+  remove(paths) {
+    const keys = isArray(paths) ? paths : [paths];
+
+    const config = removeOrOmit(keys, this.config);
 
     return new this.constructor(config, this.options);
   }

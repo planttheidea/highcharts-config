@@ -3,6 +3,8 @@
  */
 
 /**
+ * @private
+ *
  * @constant
  * @type {Array<string>}
  * @desfault
@@ -35,6 +37,8 @@ export const CHART_CONVENIENCE_METHOD_NAMES = [
 ];
 
 /**
+ * @private
+ *
  * @constant
  * @type {Array<string>}
  * @default
@@ -45,6 +49,8 @@ export const OPTIONS_CONVENIENCE_METHOD_NAMES = [
 ];
 
 /**
+ * @private
+ *
  * @constant
  * @type {Array<string>}
  * @default
