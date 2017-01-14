@@ -86,11 +86,7 @@ class ChartConfig extends Config {
     const indexNumber = +indexString;
     const indexToRemove = chartIndices[isNAN(indexNumber) ? 0 : indexNumber];
 
-    if (isUndefined(indexToRemove)) {
-      return this;
-    }
-
-    return this.remove(`series[${indexToRemove}]`);
+    return isUndefined(indexToRemove) ? this : this.remove(`series[${indexToRemove}]`);
   }
 }
 

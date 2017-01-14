@@ -12,6 +12,8 @@ import {
   CHARTS_UNABLE_TO_BE_MIXED
 } from './constants';
 
+const keys = Object.keys;
+
 /**
  * @module utils
  */
@@ -164,7 +166,7 @@ export const createPropertyConvenienceMethod = (property) => {
     ] = args;
 
     if (isPlainObject(subKey)) {
-      const cleanArgs = Object.keys(subKey).reduce((updatedObject, keyWithoutProperty) => {
+      const cleanArgs = keys(subKey).reduce((updatedObject, keyWithoutProperty) => {
         updatedObject[getNamespacedKey(keyWithoutProperty, property)] = subKey[keyWithoutProperty];
 
         return updatedObject;
@@ -265,7 +267,7 @@ export const getNewChartSeries = (series, type) => {
  * @returns {Object} new configuration object
  */
 export const getNewConfigFromObject = (currentConfig, object) => {
-  return Object.keys(object).reduce((config, key) => {
+  return keys(object).reduce((config, key) => {
     return set(key, object[key], config);
   }, currentConfig);
 };
@@ -309,20 +311,20 @@ export const getNewConfigWithSeries = (config, type, series) => {
  * @returns {Object} object with values at paths removed
  */
 export const removeOrOmit = (paths, object) => {
-  let pathArray, finalIndex, initialPath, parent, value;
+  let pathArray, finalIndex, parent, value, indexToRemove;
 
   return paths.reduce((updatedObject, path) => {
     pathArray = toPath(path);
-    finalIndex = pathArray.length - 1;
-    initialPath = pathArray.slice(0, finalIndex);
-    parent = get(initialPath, updatedObject);
+    finalIndex = pathArray.pop();
+    parent = get(pathArray, updatedObject);
 
     if (isArray(parent)) {
+      indexToRemove = ~~pathArray[finalIndex];      
       value = parent.filter((value, index) => {
-        return index !== ~~pathArray[finalIndex];
+        return index !== indexToRemove;
       });
 
-      return set(initialPath, value, updatedObject);
+      return set(pathArray, value, updatedObject);
     }
 
     return omit([path], updatedObject);
