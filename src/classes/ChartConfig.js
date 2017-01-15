@@ -52,7 +52,7 @@ class ChartConfig extends Config {
       throw new TypeError('Series passed must be either a plain object or an array of plain objects.');
     }
 
-    const config = getNewConfigWithSeries(this.config, type, getNewChartSeries(series, type));
+    const config = getNewConfigWithSeries(this.config, getNewChartSeries(series, type));
 
     return new ChartConfig(config, this.options);
   }
