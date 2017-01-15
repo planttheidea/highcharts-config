@@ -1,5 +1,19 @@
 {
   "author": "planttheidea",
+  "ava": {
+    "concurrency": 5,
+    "babel": "inherit",
+    "failFast": true,
+    "files": [
+      "test/classes/*.js",
+      "test/*.js"
+    ],
+    "require": [
+      "babel-register",
+      "babel-polyfill"
+    ],
+    "verbose": true
+  },
   "bugs": {
     "url": "https://github.com/planttheidea/highcharts-config/issues"
   },

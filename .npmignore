@@ -9,6 +9,7 @@ test
 .eslintrc
 .gitignore
 .npmignore
+webpack.config.dev.js
 webpack.config.js
 webpack.config.minified.js
-webpack.config.dev.js
+yarn.lock

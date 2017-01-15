@@ -89,12 +89,11 @@ export const createBuildConfig = (Constructor) => {
  * curried function to get the config object based on if it is a Config or not
  *
  * @param {function} Config base config class
- * @returns {function(*): Object} function to retrieve the config object
+ * @param {Config|Object} config the object to test
+ * @returns {Object} the config object
  */
-export const getConfig = (Config) => {
-  return (config) => {
-    return config instanceof Config ? config.get() : config;
-  };
+export const getConfig = (Config, config) => {
+  return config instanceof Config ? config.get() : config;
 };
 
 /**
@@ -113,6 +112,8 @@ export const getDefaultSeries = (config) => {
 };
 
 /**
+ * @private
+ *
  * @function getKeyWithProperty
  * 
  * @description
@@ -281,11 +282,10 @@ export const getNewConfigFromObject = (currentConfig, object) => {
  * get a new configuration with an series concatenated with existing series
  *
  * @param {Object} config current configuration of the given instance
- * @param {string} type the type of chart
  * @param {Array<Object>} series series data sets
  * @returns {Object} new configuration object
  */
-export const getNewConfigWithSeries = (config, type, series) => {
+export const getNewConfigWithSeries = (config, series) => {
   const updatedSeries = [
     ...getDefaultSeries(config),
     ...series

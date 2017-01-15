@@ -43,8 +43,9 @@ module.exports = {
   },
 
   output: {
-    filename: 'waddup.js',
-    library: 'waddup',
+    filename: 'highcharts-config.js',
+    library: 'buildConfig',
+    libraryTarget: 'umd',
     path: path.resolve(__dirname, 'dist'),
     umdNamedDefine: true
   },

@@ -64,18 +64,5 @@ module.exports = Object.assign({}, defaultConfig, {
     new WebpackDashboard({
       port: 3210
     })
-  ]),
-
-  resolve: {
-    extensions: [
-      '',
-      '.js'
-    ],
-
-    fallback: [
-      path.join(__dirname, 'src')
-    ],
-
-    root: __dirname
-  }
+  ])
 });

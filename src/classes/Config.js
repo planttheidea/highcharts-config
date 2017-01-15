@@ -38,7 +38,7 @@ class Config {
    * @returns {Config} configuration class
    */
   constructor(config = {}, options = {}) {
-    this.config = getConfig(Config)(config);
+    this.config = getConfig(Config, config);
     this.options = {...options};
 
     const {
@@ -120,7 +120,7 @@ class Config {
    * @returns {*} value at path
    */
   get(path) {
-    return isUndefined(path) ? {...this.config} : get(path, this.config);
+    return isUndefined(path) ? this.config : get(path, this.config);
   }
 
   /**
@@ -132,9 +132,13 @@ class Config {
    * @returns {Config} new config class
    */
   merge(...otherConfigs) {
-    const configs = otherConfigs.map(getConfig(Config));
+    if (!otherConfigs.length) {
+      return this;
+    }
 
-    const config = merge(this.config, ...configs);
+    const config = otherConfigs.reduce((newConfig, config) => {
+      return merge(newConfig, getConfig(Config, config));
+    }, this.config);
 
     return new this.constructor(config, this.options);
   }
@@ -164,6 +168,10 @@ class Config {
    * @returns {Config} new config class
    */
   set(path, value) {
+    if (isUndefined(path)) {
+      return this;
+    }
+
     const config = isPlainObject(path) ? getNewConfigFromObject(this.config, path) : set(path, value, this.config);
 
     return new this.constructor(config, this.options);

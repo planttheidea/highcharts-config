@@ -1,4 +1,5 @@
 // external dependencies
+import isArray from 'lodash/fp/isArray';
 import isNAN from 'lodash/fp/isNaN';
 import isPlainObject from 'lodash/fp/isPlainObject';
 import isUndefined from 'lodash/fp/isUndefined';
@@ -41,7 +42,16 @@ class ChartConfig extends Config {
    * @returns {ChartConfig} new config class
    */
   addChart(type, seriesPassed) {
-    const series = isPlainObject(seriesPassed) ? [seriesPassed] : seriesPassed;
+    let series;
+
+    if (isArray(seriesPassed)) {
+      series = seriesPassed;
+    } else if (isPlainObject(seriesPassed)) {
+      series = [seriesPassed];
+    } else {
+      throw new TypeError('Series passed must be either a plain object or an array of plain objects.');
+    }
+
     const config = getNewConfigWithSeries(this.config, type, getNewChartSeries(series, type));
 
     return new ChartConfig(config, this.options);
