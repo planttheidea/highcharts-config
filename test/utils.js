@@ -601,3 +601,92 @@ test('if removeOrOmit will remove an index from the object passed', (t) => {
     }
   });
 });
+
+test('if getArrayOfItem returns the item if already an array', (t) => {
+  const item = ['foo'];
+
+  const result = utils.getArrayOfItem(item);
+
+  t.is(result, item);
+});
+
+test('if getArrayOfItem returns the item wrapped in an array if not aleady an array', (t) => {
+  const item = {};
+
+  const result = utils.getArrayOfItem(item);
+
+  t.deepEqual(result, [item]);
+  t.is(result[0], item);
+});
+
+test('if getFirstIfOnly returns first item in the array if its the only one', (t) => {
+  const item = {};
+
+  const result = utils.getFirstIfOnly([item]);
+
+  t.is(result, item);
+});
+
+test('if getPathArray will return the path array if not already an array', (t) => {
+  const path = 'foo.bar';
+  const result = utils.getPathArray(path);
+
+  t.deepEqual(result, [
+    'foo',
+    'bar'
+  ]);
+});
+
+test('if getPathArray will return the original array if already an array', (t) => {
+  const paths = ['foo', 'bar'];
+  const result = utils.getPathArray(paths);
+
+  t.is(result, paths);
+});
+
+test('if getFirstIfOnly returns all items in the array if there is more than one', (t) => {
+  const item = {};
+  const secondItem = {};
+  const items = [item, secondItem];
+
+  const result = utils.getFirstIfOnly(items);
+
+  t.not(result, item);
+  t.is(result, items);
+});
+
+test('if getSpecificSeries finds the correct series based on types passed', (t) => {
+  const type1 = 'spline';
+  const type2 = 'bar';
+  const types = [type1, type2];
+  const series = [
+    {type: type1},
+    {type: 'line'},
+    {type: type1},
+    {type: type2},
+    {type: type2}
+  ];
+
+  const result = utils.getSpecificSeries(series, types);
+  const expectedResult = series.filter(({type}) => {
+    return type === type1 || type === type2;
+  });
+
+  t.deepEqual(result, expectedResult);
+});
+
+test('if getSpecificSeries finds the correct series based on types and indices passed', (t) => {
+  const type1 = 'spline';
+  const type2 = 'bar';
+  const types = [`${type1}[0]`, `${type2}[1]`];
+  const series = [
+    {type: type1},
+    {type: 'line'},
+    {type: type1},
+    {type: type2}
+  ];
+
+  const result = utils.getSpecificSeries(series, types);
+
+  t.deepEqual(result, series[2]);
+});

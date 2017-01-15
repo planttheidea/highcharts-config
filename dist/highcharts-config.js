@@ -75,7 +75,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _OptionsConfig2 = _interopRequireDefault(_OptionsConfig);
 	
-	var _utils = __webpack_require__(131);
+	var _utils = __webpack_require__(130);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -93,7 +93,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * import buildConfig from 'highcharts-config';
 	 *
 	 * const config = buildConfig()
-	 *   .addChart('line', {
+	 *   .addType('line', {
 	 *     data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6],
 	 *     name: 'Stuff'
 	 *   })
@@ -146,7 +146,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * import buildConfig from 'highcharts-config';
 	 *
 	 * const config = buildConfig()
-	 *   .addChart('line', {
+	 *   .addType('line', {
 	 *     data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6],
 	 *     name: 'Stuff'
 	 *   })
@@ -206,17 +206,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _isUndefined2 = _interopRequireDefault(_isUndefined);
 	
-	var _toPath3 = __webpack_require__(98);
-	
-	var _toPath4 = _interopRequireDefault(_toPath3);
-	
-	var _Config2 = __webpack_require__(99);
+	var _Config2 = __webpack_require__(98);
 	
 	var _Config3 = _interopRequireDefault(_Config2);
 	
 	var _constants = __webpack_require__(139);
 	
-	var _utils = __webpack_require__(131);
+	var _utils = __webpack_require__(130);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -256,10 +252,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	
 	  _createClass(ChartConfig, [{
-	    key: 'addChart',
+	    key: 'addType',
 	
 	    /**
-	     * @function addChart
+	     * @function addType
 	     *
 	     * @description
 	     * add a chart type with provided series
@@ -268,7 +264,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {Array<Object>} seriesPassed data series to populate chart with
 	     * @returns {ChartConfig} new config class
 	     */
-	    value: function addChart(type, seriesPassed) {
+	    value: function addType(type, seriesPassed) {
 	      var series = void 0;
 	
 	      if ((0, _isArray2.default)(seriesPassed)) {
@@ -279,24 +275,51 @@ return /******/ (function(modules) { // webpackBootstrap
 	        throw new TypeError('Series passed must be either a plain object or an array of plain objects.');
 	      }
 	
-	      var config = (0, _utils.getNewConfigWithSeries)(this.config, type, (0, _utils.getNewChartSeries)(series, type));
+	      var config = (0, _utils.getNewConfigWithSeries)(this.config, (0, _utils.getNewChartSeries)(series, type));
 	
 	      return new ChartConfig(config, this.options);
 	    }
 	
 	    /**
-	     * @function removeChart
+	     * @function getType
+	     *
+	     * @description
+	     * get a specific type (or a list of types) from the series in the config
+	     *
+	     * @param {Array<string>|string} types the type(s) to select from the config
+	     * @returns {Array<Object>|Object|null} the matching type(s)
+	     */
+	
+	  }, {
+	    key: 'getType',
+	    value: function getType(types) {
+	      var series = this.get('series');
+	      var length = series ? series.length : 0;
+	
+	      if (!length) {
+	        return null;
+	      }
+	
+	      if ((0, _isUndefined2.default)(types)) {
+	        return (0, _utils.getFirstIfOnly)(series);
+	      }
+	
+	      return (0, _utils.getSpecificSeries)(series, (0, _utils.getArrayOfItem)(types));
+	    }
+	
+	    /**
+	     * @function removeType
 	     *
 	     * @description
 	     * remove an instance of a chart type, all instances, or all charts
 	     *
-	     * @param {string} [chartPath] chart type with optional index
+	     * @param {Array<number|string>|string} [chartPath] chart type with optional index
 	     * @returns {ChartConfig} new config class
 	     */
 	
 	  }, {
-	    key: 'removeChart',
-	    value: function removeChart(chartPath) {
+	    key: 'removeType',
+	    value: function removeType(chartPath) {
 	      if ((0, _isUndefined2.default)(chartPath)) {
 	        return this.remove('series');
 	      }
@@ -309,10 +332,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return this;
 	      }
 	
-	      var _toPath = (0, _toPath4.default)(chartPath),
-	          _toPath2 = _slicedToArray(_toPath, 2),
-	          chart = _toPath2[0],
-	          indexString = _toPath2[1];
+	      var _getPathArray = (0, _utils.getPathArray)(chartPath),
+	          _getPathArray2 = _slicedToArray(_getPathArray, 2),
+	          chart = _getPathArray2[0],
+	          indexString = _getPathArray2[1];
 	
 	      if ((0, _isUndefined2.default)(indexString)) {
 	        var series = currentSeries.filter(function (_ref) {
@@ -329,6 +352,52 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var indexToRemove = chartIndices[(0, _isNaN2.default)(indexNumber) ? 0 : indexNumber];
 	
 	      return (0, _isUndefined2.default)(indexToRemove) ? this : this.remove('series[' + indexToRemove + ']');
+	    }
+	
+	    /**
+	     * @function updateType
+	     *
+	     * @description
+	     * update an existing type in the series of the config
+	     *
+	     * @param {Array<number|string>|string} chartPath chart type with optional index
+	     * @param {Object} seriesInstance value to update matching series instance to
+	     * @returns {ChartConfig} new config class
+	     */
+	
+	  }, {
+	    key: 'updateType',
+	    value: function updateType(chartPath, seriesInstance) {
+	      var _config$series2 = this.config.series,
+	          currentSeries = _config$series2 === undefined ? [] : _config$series2;
+	
+	
+	      var length = currentSeries.length;
+	
+	      if ((0, _isUndefined2.default)(chartPath) || !length) {
+	        return this;
+	      }
+	
+	      if (!(0, _isPlainObject2.default)(seriesInstance)) {
+	        throw new TypeError('Series passed must be a plain object.');
+	      }
+	
+	      var _getPathArray3 = (0, _utils.getPathArray)(chartPath),
+	          _getPathArray4 = _slicedToArray(_getPathArray3, 2),
+	          chart = _getPathArray4[0],
+	          indexString = _getPathArray4[1];
+	
+	      var indexNumber = +indexString;
+	      var chartIndices = (0, _utils.getMatchingChartIndices)(currentSeries, chart);
+	      var indexToUpdate = chartIndices[(0, _isNaN2.default)(indexNumber) ? 0 : indexNumber];
+	
+	      if (indexToUpdate >= length) {
+	        return this;
+	      }
+	
+	      var series = (0, _utils.getNewChartSeries)([seriesInstance], chart);
+	
+	      return (0, _isUndefined2.default)(indexToUpdate) ? this : this.set('series[' + indexToUpdate + ']', series[0]);
 	    }
 	  }]);
 	
@@ -4309,17 +4378,6 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 98 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var convert = __webpack_require__(4),
-	    func = convert('toPath', __webpack_require__(82), __webpack_require__(89));
-	
-	func.placeholder = __webpack_require__(7);
-	module.exports = func;
-
-
-/***/ },
-/* 99 */
-/***/ function(module, exports, __webpack_require__) {
-
 	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
@@ -4334,15 +4392,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	// utils
 	
 	
-	var _get2 = __webpack_require__(100);
+	var _get2 = __webpack_require__(99);
 	
 	var _get3 = _interopRequireDefault(_get2);
 	
-	var _isArray = __webpack_require__(3);
-	
-	var _isArray2 = _interopRequireDefault(_isArray);
-	
-	var _isFunction = __webpack_require__(105);
+	var _isFunction = __webpack_require__(104);
 	
 	var _isFunction2 = _interopRequireDefault(_isFunction);
 	
@@ -4354,15 +4408,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _isUndefined2 = _interopRequireDefault(_isUndefined);
 	
-	var _merge2 = __webpack_require__(106);
+	var _merge2 = __webpack_require__(105);
 	
 	var _merge3 = _interopRequireDefault(_merge2);
 	
-	var _set2 = __webpack_require__(128);
+	var _set2 = __webpack_require__(127);
 	
 	var _set3 = _interopRequireDefault(_set2);
 	
-	var _utils = __webpack_require__(131);
+	var _utils = __webpack_require__(130);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -4502,7 +4556,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'remove',
 	    value: function remove(paths) {
-	      var keys = (0, _isArray2.default)(paths) ? paths : [paths];
+	      var keys = (0, _utils.getArrayOfItem)(paths);
 	
 	      var config = (0, _utils.removeOrOmit)(keys, this.config);
 	
@@ -4581,21 +4635,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 100 */
+/* 99 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var convert = __webpack_require__(4),
-	    func = convert('get', __webpack_require__(101));
+	    func = convert('get', __webpack_require__(100));
 	
 	func.placeholder = __webpack_require__(7);
 	module.exports = func;
 
 
 /***/ },
-/* 101 */
+/* 100 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseGet = __webpack_require__(102);
+	var baseGet = __webpack_require__(101);
 	
 	/**
 	 * Gets the value at `path` of `object`. If the resolved value is
@@ -4631,10 +4685,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 102 */
+/* 101 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var castPath = __webpack_require__(103),
+	var castPath = __webpack_require__(102),
 	    toKey = __webpack_require__(87);
 	
 	/**
@@ -4661,11 +4715,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 103 */
+/* 102 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var isArray = __webpack_require__(72),
-	    isKey = __webpack_require__(104),
+	    isKey = __webpack_require__(103),
 	    stringToPath = __webpack_require__(85),
 	    toString = __webpack_require__(88);
 	
@@ -4688,7 +4742,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 104 */
+/* 103 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var isArray = __webpack_require__(72),
@@ -4723,7 +4777,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 105 */
+/* 104 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var convert = __webpack_require__(4),
@@ -4734,22 +4788,22 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 106 */
+/* 105 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var convert = __webpack_require__(4),
-	    func = convert('merge', __webpack_require__(107));
+	    func = convert('merge', __webpack_require__(106));
 	
 	func.placeholder = __webpack_require__(7);
 	module.exports = func;
 
 
 /***/ },
-/* 107 */
+/* 106 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseMerge = __webpack_require__(108),
-	    createAssigner = __webpack_require__(122);
+	var baseMerge = __webpack_require__(107),
+	    createAssigner = __webpack_require__(121);
 	
 	/**
 	 * This method is like `_.assign` except that it recursively merges own and
@@ -4790,13 +4844,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 108 */
+/* 107 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Stack = __webpack_require__(48),
-	    assignMergeValue = __webpack_require__(109),
-	    baseFor = __webpack_require__(110),
-	    baseMergeDeep = __webpack_require__(112),
+	    assignMergeValue = __webpack_require__(108),
+	    baseFor = __webpack_require__(109),
+	    baseMergeDeep = __webpack_require__(111),
 	    isObject = __webpack_require__(15),
 	    keysIn = __webpack_require__(57);
 	
@@ -4837,7 +4891,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 109 */
+/* 108 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var baseAssignValue = __webpack_require__(40),
@@ -4863,10 +4917,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 110 */
+/* 109 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var createBaseFor = __webpack_require__(111);
+	var createBaseFor = __webpack_require__(110);
 	
 	/**
 	 * The base implementation of `baseForOwn` which iterates over `object`
@@ -4885,7 +4939,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 111 */
+/* 110 */
 /***/ function(module, exports) {
 
 	/**
@@ -4916,23 +4970,23 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 112 */
+/* 111 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var assignMergeValue = __webpack_require__(109),
+	var assignMergeValue = __webpack_require__(108),
 	    cloneBuffer = __webpack_require__(58),
-	    cloneTypedArray = __webpack_require__(113),
+	    cloneTypedArray = __webpack_require__(112),
 	    copyArray = __webpack_require__(30),
 	    initCloneObject = __webpack_require__(69),
-	    isArguments = __webpack_require__(116),
+	    isArguments = __webpack_require__(115),
 	    isArray = __webpack_require__(72),
-	    isArrayLikeObject = __webpack_require__(117),
+	    isArrayLikeObject = __webpack_require__(116),
 	    isBuffer = __webpack_require__(73),
 	    isFunction = __webpack_require__(75),
 	    isObject = __webpack_require__(15),
 	    isPlainObject = __webpack_require__(95),
-	    isTypedArray = __webpack_require__(120),
-	    toPlainObject = __webpack_require__(121);
+	    isTypedArray = __webpack_require__(119),
+	    toPlainObject = __webpack_require__(120);
 	
 	/**
 	 * A specialized version of `baseMerge` for arrays and objects which performs
@@ -5015,10 +5069,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 113 */
+/* 112 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var cloneArrayBuffer = __webpack_require__(114);
+	var cloneArrayBuffer = __webpack_require__(113);
 	
 	/**
 	 * Creates a clone of `typedArray`.
@@ -5037,10 +5091,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 114 */
+/* 113 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Uint8Array = __webpack_require__(115);
+	var Uint8Array = __webpack_require__(114);
 	
 	/**
 	 * Creates a clone of `arrayBuffer`.
@@ -5059,7 +5113,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 115 */
+/* 114 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var root = __webpack_require__(16);
@@ -5071,7 +5125,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 116 */
+/* 115 */
 /***/ function(module, exports) {
 
 	/**
@@ -5095,10 +5149,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 117 */
+/* 116 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isArrayLike = __webpack_require__(118),
+	var isArrayLike = __webpack_require__(117),
 	    isObjectLike = __webpack_require__(93);
 	
 	/**
@@ -5134,11 +5188,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 118 */
+/* 117 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var isFunction = __webpack_require__(75),
-	    isLength = __webpack_require__(119);
+	    isLength = __webpack_require__(118);
 	
 	/**
 	 * Checks if `value` is array-like. A value is considered array-like if it's
@@ -5173,7 +5227,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 119 */
+/* 118 */
 /***/ function(module, exports) {
 
 	/** Used as references for various `Number` constants. */
@@ -5214,7 +5268,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 120 */
+/* 119 */
 /***/ function(module, exports) {
 
 	/**
@@ -5238,7 +5292,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 121 */
+/* 120 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var copyObject = __webpack_require__(38),
@@ -5276,11 +5330,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 122 */
+/* 121 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseRest = __webpack_require__(123),
-	    isIterateeCall = __webpack_require__(127);
+	var baseRest = __webpack_require__(122),
+	    isIterateeCall = __webpack_require__(126);
 	
 	/**
 	 * Creates a function like `_.assign`.
@@ -5319,12 +5373,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 123 */
+/* 122 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var identity = __webpack_require__(124),
-	    overRest = __webpack_require__(125),
-	    setToString = __webpack_require__(126);
+	var identity = __webpack_require__(123),
+	    overRest = __webpack_require__(124),
+	    setToString = __webpack_require__(125);
 	
 	/**
 	 * The base implementation of `_.rest` which doesn't validate or coerce arguments.
@@ -5342,7 +5396,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 124 */
+/* 123 */
 /***/ function(module, exports) {
 
 	/**
@@ -5369,7 +5423,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 125 */
+/* 124 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var apply = __webpack_require__(19);
@@ -5411,7 +5465,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 126 */
+/* 125 */
 /***/ function(module, exports) {
 
 	/**
@@ -5438,7 +5492,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 127 */
+/* 126 */
 /***/ function(module, exports) {
 
 	/**
@@ -5462,21 +5516,21 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 128 */
+/* 127 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var convert = __webpack_require__(4),
-	    func = convert('set', __webpack_require__(129));
+	    func = convert('set', __webpack_require__(128));
 	
 	func.placeholder = __webpack_require__(7);
 	module.exports = func;
 
 
 /***/ },
-/* 129 */
+/* 128 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseSet = __webpack_require__(130);
+	var baseSet = __webpack_require__(129);
 	
 	/**
 	 * Sets the value at `path` of `object`. If a portion of `path` doesn't exist,
@@ -5514,11 +5568,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 130 */
+/* 129 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var assignValue = __webpack_require__(39),
-	    castPath = __webpack_require__(103),
+	    castPath = __webpack_require__(102),
 	    isIndex = __webpack_require__(31),
 	    isObject = __webpack_require__(15),
 	    toKey = __webpack_require__(87);
@@ -5567,7 +5621,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 131 */
+/* 130 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5575,11 +5629,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.removeOrOmit = exports.getNewConfigWithSeries = exports.getNewConfigFromObject = exports.getNewChartSeries = exports.getMatchingChartIndices = exports.isMixedChartType = exports.createPropertyConvenienceMethod = exports.canCombineChartTypes = exports.getNamespacedKey = exports.getDefaultSeries = exports.getConfig = exports.createBuildConfig = exports.createAddMethodWrapper = exports.createAddMethod = undefined;
+	exports.removeOrOmit = exports.getSpecificSeries = exports.getNewConfigWithSeries = exports.getNewConfigFromObject = exports.getNewChartSeries = exports.getMatchingChartIndices = exports.getFirstIfOnly = exports.isMixedChartType = exports.createPropertyConvenienceMethod = exports.canCombineChartTypes = exports.getNamespacedKey = exports.getDefaultSeries = exports.getConfig = exports.getPathArray = exports.getArrayOfItem = exports.createBuildConfig = exports.createAddMethodWrapper = exports.createAddMethod = undefined;
+	
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
-	var _get = __webpack_require__(100);
+	var _get = __webpack_require__(99);
 	
 	var _get2 = _interopRequireDefault(_get);
 	
@@ -5587,23 +5643,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _isArray2 = _interopRequireDefault(_isArray);
 	
-	var _isFunction = __webpack_require__(105);
+	var _isFunction = __webpack_require__(104);
 	
 	var _isFunction2 = _interopRequireDefault(_isFunction);
+	
+	var _isNaN = __webpack_require__(91);
+	
+	var _isNaN2 = _interopRequireDefault(_isNaN);
 	
 	var _isPlainObject = __webpack_require__(94);
 	
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 	
-	var _omit = __webpack_require__(132);
+	var _isUndefined = __webpack_require__(97);
+	
+	var _isUndefined2 = _interopRequireDefault(_isUndefined);
+	
+	var _omit = __webpack_require__(131);
 	
 	var _omit2 = _interopRequireDefault(_omit);
 	
-	var _set = __webpack_require__(128);
+	var _set = __webpack_require__(127);
 	
 	var _set2 = _interopRequireDefault(_set);
 	
-	var _toPath = __webpack_require__(98);
+	var _toPath = __webpack_require__(138);
 	
 	var _toPath2 = _interopRequireDefault(_toPath);
 	
@@ -5688,6 +5752,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    return new Constructor(config, options);
 	  };
+	};
+	
+	/**
+	 * @private
+	 *
+	 * @function getArrayOfItem
+	 *
+	 * @description
+	 * get the array form of the item passed, if not already an array
+	 *
+	 * @param {*} item item to return in array form
+	 * @returns {Array<*>} array form of item
+	 */
+	var getArrayOfItem = exports.getArrayOfItem = function getArrayOfItem(item) {
+	  return (0, _isArray2.default)(item) ? item : [item];
+	};
+	
+	/**
+	 * @private
+	 *
+	 * @function getPathArray
+	 *
+	 * @description
+	 * get the array form of the full path passed
+	 *
+	 * @param {Array<number|string>|string} path path to get array form of
+	 * @returns {Array<number|string>} array form of path
+	 */
+	var getPathArray = exports.getPathArray = function getPathArray(path) {
+	  return (0, _isArray2.default)(path) ? path : (0, _toPath2.default)(path);
 	};
 	
 	/**
@@ -5830,6 +5924,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  });
 	};
 	
+	var getFirstIfOnly = exports.getFirstIfOnly = function getFirstIfOnly(items) {
+	  return items.length === 1 ? items[0] : items;
+	};
+	
 	/**
 	 * @private
 	 *
@@ -5913,6 +6011,51 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * @private
 	 *
+	 * @function getSpecificSeries
+	 *
+	 * @description
+	 * get series that match the provided types
+	 *
+	 * @param {Array<Object>} series series to find matches for
+	 * @param {Array<string> }types types of series to filter by
+	 * @returns {Array<Object>|Object} matching series
+	 */
+	var getSpecificSeries = exports.getSpecificSeries = function getSpecificSeries(series, types) {
+	  var chart = void 0,
+	      indexOfChart = void 0,
+	      matches = void 0,
+	      match = void 0;
+	
+	  var specificSeries = types.reduce(function (matchingSeries, type) {
+	    var _getPathArray = getPathArray(type);
+	
+	    var _getPathArray2 = _slicedToArray(_getPathArray, 2);
+	
+	    chart = _getPathArray2[0];
+	    indexOfChart = _getPathArray2[1];
+	
+	
+	    matches = series.filter(function (_ref4) {
+	      var seriesType = _ref4.type;
+	
+	      return seriesType === chart;
+	    });
+	
+	    if ((0, _isUndefined2.default)(indexOfChart)) {
+	      return [].concat(_toConsumableArray(matchingSeries), _toConsumableArray(matches));
+	    }
+	
+	    match = matches[+indexOfChart];
+	
+	    return (0, _isUndefined2.default)(match) ? matchingSeries : [].concat(_toConsumableArray(matchingSeries), [match]);
+	  }, []);
+	
+	  return getFirstIfOnly(specificSeries);
+	};
+	
+	/**
+	 * @private
+	 *
 	 * @function removeOrOmit
 	 *
 	 * @description
@@ -5931,14 +6074,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	      indexToMatch = void 0;
 	
 	  return paths.reduce(function (updatedObject, path) {
-	    pathArray = (0, _toPath2.default)(path);
+	    pathArray = getPathArray(path);
 	    finalIndex = pathArray.length - 1;
 	    initialPath = pathArray.slice(0, finalIndex);
 	    parent = (0, _get2.default)(initialPath, updatedObject);
 	
 	    if ((0, _isArray2.default)(parent)) {
-	      indexToMatch = ~~pathArray[finalIndex];
-	      value = parent.filter(function (value, index) {
+	      indexToMatch = +pathArray[finalIndex];
+	      value = (0, _isNaN2.default)(indexToMatch) ? parent : parent.filter(function (value, index) {
 	        return index !== indexToMatch;
 	      });
 	
@@ -5950,26 +6093,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 132 */
+/* 131 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var convert = __webpack_require__(4),
-	    func = convert('omit', __webpack_require__(133));
+	    func = convert('omit', __webpack_require__(132));
 	
 	func.placeholder = __webpack_require__(7);
 	module.exports = func;
 
 
 /***/ },
-/* 133 */
+/* 132 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var arrayMap = __webpack_require__(83),
 	    baseClone = __webpack_require__(47),
-	    baseUnset = __webpack_require__(134),
-	    castPath = __webpack_require__(103),
+	    baseUnset = __webpack_require__(133),
+	    castPath = __webpack_require__(102),
 	    copyObject = __webpack_require__(38),
-	    customOmitClone = __webpack_require__(138),
+	    customOmitClone = __webpack_require__(137),
 	    flatRest = __webpack_require__(81),
 	    getAllKeysIn = __webpack_require__(65);
 	
@@ -6024,12 +6167,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 134 */
+/* 133 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var castPath = __webpack_require__(103),
-	    last = __webpack_require__(135),
-	    parent = __webpack_require__(136),
+	var castPath = __webpack_require__(102),
+	    last = __webpack_require__(134),
+	    parent = __webpack_require__(135),
 	    toKey = __webpack_require__(87);
 	
 	/**
@@ -6050,7 +6193,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 135 */
+/* 134 */
 /***/ function(module, exports) {
 
 	/**
@@ -6076,11 +6219,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 136 */
+/* 135 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseGet = __webpack_require__(102),
-	    baseSlice = __webpack_require__(137);
+	var baseGet = __webpack_require__(101),
+	    baseSlice = __webpack_require__(136);
 	
 	/**
 	 * Gets the parent value at `path` of `object`.
@@ -6098,7 +6241,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 137 */
+/* 136 */
 /***/ function(module, exports) {
 
 	/**
@@ -6135,7 +6278,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 138 */
+/* 137 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var isPlainObject = __webpack_require__(95);
@@ -6154,6 +6297,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	
 	module.exports = customOmitClone;
+
+
+/***/ },
+/* 138 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var convert = __webpack_require__(4),
+	    func = convert('toPath', __webpack_require__(82), __webpack_require__(89));
+	
+	func.placeholder = __webpack_require__(7);
+	module.exports = func;
 
 
 /***/ },
@@ -6206,7 +6360,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 	
-	var _Config2 = __webpack_require__(99);
+	var _Config2 = __webpack_require__(98);
 	
 	var _Config3 = _interopRequireDefault(_Config2);
 	

@@ -36,6 +36,10 @@ const TOKYO_TEMPERATURE_DATA = {
   name: 'Tokyo',
   data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
 };
+const BEIJING_TEMPERATURE_DATA = {
+  name: 'Beijing',
+  data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
+};
 const NEW_YORK_TEMPERATURE_DATA = {
   name: 'New York',
   data: [-0.2, 0.8, 5.7, 11.3, 17.0, 22.0, 24.8, 24.1, 20.1, 14.1, 8.6, 2.5]
@@ -180,11 +184,14 @@ const splineConfig = defaultConfig
   })
   .yAxis('title.text', 'Temperature (C)')
   .tooltip('valueSuffix', 'C')
-  .addChart('spline', TOKYO_TEMPERATURE_DATA)
-  .addChart('line', BERLIN_TEMPERATURE_DATA)
-  .addChart('spline', LONDON_TEMPERATURE_DATA)
-  .addChart('spline', NEW_YORK_TEMPERATURE_DATA)
-  .removeChart('spline[1]');
+  .addType('spline', TOKYO_TEMPERATURE_DATA)
+  .addType('line', BERLIN_TEMPERATURE_DATA)
+  .addType('spline', LONDON_TEMPERATURE_DATA)
+  .addType('spline', NEW_YORK_TEMPERATURE_DATA)
+  .removeType('spline[1]')
+  .updateType('spline[0]', BEIJING_TEMPERATURE_DATA);
+
+console.log(splineConfig.getType('spline[1]'));
 
 const mixtureConfig = defaultConfig
   .title('text', 'Combination chart')
@@ -197,9 +204,9 @@ const mixtureConfig = defaultConfig
       color: 'black'
     }
   })
-  .addChart('column', FRUIT_CONSUMPTION_VOLUME_DATA)
-  .addChart('spline', FRUIT_CONSUMPTION_AVERAGE_DATA)
-  .addChart('pie', FRUIT_CONSUMPTION_BREAKDOWN_DATA);
+  .addType('column', FRUIT_CONSUMPTION_VOLUME_DATA)
+  .addType('spline', FRUIT_CONSUMPTION_AVERAGE_DATA)
+  .addType('pie', FRUIT_CONSUMPTION_BREAKDOWN_DATA);
 
 const gaugeConfig = defaultConfig
   .credits('enabled', false)
@@ -242,7 +249,7 @@ const gaugeConfig = defaultConfig
       y: 16
     }
   })
-  .addChart('solidgauge', SPEED_DATA);
+  .addType('solidgauge', SPEED_DATA);
 
 const boxplotConfig = defaultConfig
   .title('text', 'Box Plot')
@@ -266,7 +273,7 @@ const boxplotConfig = defaultConfig
     }],
     'title.text': 'Observations'
   })
-  .addChart('boxplot', BOX_PLOT_DATA);
+  .addType('boxplot', BOX_PLOT_DATA);
 
 const heatmapConfig = defaultConfig
   .chart({
@@ -299,7 +306,7 @@ const heatmapConfig = defaultConfig
   .yAxis({
     categories: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
   })
-  .addChart('heatmap', EMPLOYEE_SALES_DATA);
+  .addType('heatmap', EMPLOYEE_SALES_DATA);
 
 @measure('width', {flatten: true})
 class App extends React.Component {

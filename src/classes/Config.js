@@ -1,6 +1,5 @@
 // external dependencies
 import get from 'lodash/fp/get';
-import isArray from 'lodash/fp/isArray';
 import isFunction from 'lodash/fp/isFunction';
 import isPlainObject from 'lodash/fp/isPlainObject';
 import isUndefined from 'lodash/fp/isUndefined';
@@ -11,6 +10,7 @@ import set from 'lodash/fp/set';
 import {
   createAddMethodWrapper,
   createPropertyConvenienceMethod,
+  getArrayOfItem,
   getConfig,
   getNewConfigFromObject,
   removeOrOmit
@@ -153,7 +153,7 @@ class Config {
    * @returns {Config} new config class
    */
   remove(paths) {
-    const keys = isArray(paths) ? paths : [paths];
+    const keys = getArrayOfItem(paths);
 
     const config = removeOrOmit(keys, this.config);
 

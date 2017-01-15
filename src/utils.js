@@ -2,7 +2,9 @@
 import get from 'lodash/fp/get';
 import isArray from 'lodash/fp/isArray';
 import isFunction from 'lodash/fp/isFunction';
+import isNAN from 'lodash/isNaN';
 import isPlainObject from 'lodash/fp/isPlainObject';
+import isUndefined from 'lodash/isUndefined';
 import omit from 'lodash/fp/omit';
 import set from 'lodash/fp/set';
 import toPath from 'lodash/fp/toPath';
@@ -78,6 +80,36 @@ export const createBuildConfig = (Constructor) => {
   return (config = {}, options = {}) => {
     return new Constructor(config, options);
   };
+};
+
+/**
+ * @private
+ *
+ * @function getArrayOfItem
+ *
+ * @description
+ * get the array form of the item passed, if not already an array
+ *
+ * @param {*} item item to return in array form
+ * @returns {Array<*>} array form of item
+ */
+export const getArrayOfItem = (item) => {
+  return isArray(item) ? item : [item];
+};
+
+/**
+ * @private
+ *
+ * @function getPathArray
+ *
+ * @description
+ * get the array form of the full path passed
+ *
+ * @param {Array<number|string>|string} path path to get array form of
+ * @returns {Array<number|string>} array form of path
+ */
+export const getPathArray = (path) => {
+  return isArray(path) ? path : toPath(path);
 };
 
 /**
@@ -213,6 +245,10 @@ export const isMixedChartType = (series) => {
   });
 };
 
+export const getFirstIfOnly = (items) => {
+  return items.length === 1 ? items[0] : items;
+};
+
 /**
  * @private
  *
@@ -301,6 +337,49 @@ export const getNewConfigWithSeries = (config, series) => {
 /**
  * @private
  *
+ * @function getSpecificSeries
+ *
+ * @description
+ * get series that match the provided types
+ *
+ * @param {Array<Object>} series series to find matches for
+ * @param {Array<string> }types types of series to filter by
+ * @returns {Array<Object>|Object} matching series
+ */
+export const getSpecificSeries = (series, types) => {
+  let chart, indexOfChart, matches, match;
+
+  const specificSeries = types.reduce((matchingSeries, type) => {
+    ([
+      chart,
+      indexOfChart
+    ] = getPathArray(type));
+
+    matches = series.filter(({type: seriesType}) => {
+      return seriesType === chart;
+    });
+
+    if (isUndefined(indexOfChart)) {
+      return [
+        ...matchingSeries,
+        ...matches
+      ];
+    }
+
+    match = matches[+indexOfChart];
+
+    return isUndefined(match) ? matchingSeries : [
+      ...matchingSeries,
+      match
+    ];
+  }, []);
+
+  return getFirstIfOnly(specificSeries);
+};
+
+/**
+ * @private
+ *
  * @function removeOrOmit
  *
  * @description
@@ -314,14 +393,14 @@ export const removeOrOmit = (paths, object) => {
   let pathArray, finalIndex, initialPath, parent, value, indexToMatch;
 
   return paths.reduce((updatedObject, path) => {
-    pathArray = toPath(path);
+    pathArray = getPathArray(path);
     finalIndex = pathArray.length - 1;
     initialPath = pathArray.slice(0, finalIndex);
     parent = get(initialPath, updatedObject);
 
     if (isArray(parent)) {
-      indexToMatch = ~~pathArray[finalIndex];
-      value = parent.filter((value, index) => {
+      indexToMatch = +pathArray[finalIndex];
+      value = isNAN(indexToMatch) ? parent : parent.filter((value, index) => {
         return index !== indexToMatch;
       });
 

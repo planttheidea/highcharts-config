@@ -3,7 +3,6 @@ import isArray from 'lodash/fp/isArray';
 import isNAN from 'lodash/fp/isNaN';
 import isPlainObject from 'lodash/fp/isPlainObject';
 import isUndefined from 'lodash/fp/isUndefined';
-import toPath from 'lodash/fp/toPath';
 
 // classes
 import Config from './Config';
@@ -15,9 +14,13 @@ import {
 
 // utils
 import {
+  getArrayOfItem,
+  getFirstIfOnly,
   getMatchingChartIndices,
   getNewChartSeries,
-  getNewConfigWithSeries
+  getNewConfigWithSeries,
+  getPathArray,
+  getSpecificSeries
 } from '../utils';
 
 /**
@@ -32,7 +35,7 @@ import {
  */
 class ChartConfig extends Config {
   /**
-   * @function addChart
+   * @function addType
    *
    * @description
    * add a chart type with provided series
@@ -41,7 +44,7 @@ class ChartConfig extends Config {
    * @param {Array<Object>} seriesPassed data series to populate chart with
    * @returns {ChartConfig} new config class
    */
-  addChart(type, seriesPassed) {
+  addType(type, seriesPassed) {
     let series;
 
     if (isArray(seriesPassed)) {
@@ -58,15 +61,39 @@ class ChartConfig extends Config {
   }
 
   /**
-   * @function removeChart
+   * @function getType
+   *
+   * @description
+   * get a specific type (or a list of types) from the series in the config
+   *
+   * @param {Array<string>|string} types the type(s) to select from the config
+   * @returns {Array<Object>|Object|null} the matching type(s)
+   */
+  getType(types) {
+    const series = this.get('series');
+    const length = series ? series.length : 0;
+
+    if (!length) {
+      return null;
+    }
+
+    if (isUndefined(types)) {
+      return getFirstIfOnly(series);
+    }
+
+    return getSpecificSeries(series, getArrayOfItem(types));
+  }
+
+  /**
+   * @function removeType
    *
    * @description
    * remove an instance of a chart type, all instances, or all charts
    *
-   * @param {string} [chartPath] chart type with optional index
+   * @param {Array<number|string>|string} [chartPath] chart type with optional index
    * @returns {ChartConfig} new config class
    */
-  removeChart(chartPath) {
+  removeType(chartPath) {
     if (isUndefined(chartPath)) {
       return this.remove('series');
     }
@@ -82,7 +109,7 @@ class ChartConfig extends Config {
     const [
       chart,
       indexString
-    ] = toPath(chartPath);
+    ] = getPathArray(chartPath);
 
     if (isUndefined(indexString)) {
       const series = currentSeries.filter(({type}) => {
@@ -97,6 +124,49 @@ class ChartConfig extends Config {
     const indexToRemove = chartIndices[isNAN(indexNumber) ? 0 : indexNumber];
 
     return isUndefined(indexToRemove) ? this : this.remove(`series[${indexToRemove}]`);
+  }
+
+  /**
+   * @function updateType
+   *
+   * @description
+   * update an existing type in the series of the config
+   *
+   * @param {Array<number|string>|string} chartPath chart type with optional index
+   * @param {Object} seriesInstance value to update matching series instance to
+   * @returns {ChartConfig} new config class
+   */
+  updateType(chartPath, seriesInstance) {
+    const {
+      series: currentSeries = []
+    } = this.config;
+
+    const length = currentSeries.length;
+
+    if (isUndefined(chartPath) || !length) {
+      return this;
+    }
+
+    if (!isPlainObject(seriesInstance)) {
+      throw new TypeError('Series passed must be a plain object.');
+    }
+
+    const [
+      chart,
+      indexString
+    ] = getPathArray(chartPath);
+
+    const indexNumber = +indexString;
+    const chartIndices = getMatchingChartIndices(currentSeries, chart);
+    const indexToUpdate = chartIndices[isNAN(indexNumber) ? 0 : indexNumber];
+
+    if (indexToUpdate >= length) {
+      return this;
+    }
+
+    const series = getNewChartSeries([seriesInstance], chart);
+
+    return isUndefined(indexToUpdate) ? this : this.set(`series[${indexToUpdate}]`, series[0]);
   }
 }
 
