@@ -60,7 +60,7 @@
   "main": "lib/index.js",
   "name": "highcharts-config",
   "peerDependencies": {
-    "highcharts": "^5.0.6"
+    "highcharts": ">=5.0.0"
   },
   "repository": {
     "type": "git",
