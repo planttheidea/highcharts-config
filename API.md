@@ -8,7 +8,11 @@
   * [buildConfig.addChartMethod](#buildconfigaddchartmethod)
   * [buildConfig.addOptionsMethod](#buildconfigaddoptionsmethod)
 * [ChartConfig class](#chartconfig-class)
+  * [Built-in OptionsConfig convenience methods](built-in-chartconfig-convenience-methods)
+  * [Additional OptionsConfig methods](#additional-chartconfig-methods)
 * [OptionsConfig class](#optionsconfig-class)
+  * [Built-in OptionsConfig convenience methods](built-in-optionsconfig-convenience-methods)
+  * [Additional OptionsConfig methods](#additional-optionsconfig-methods)
 
 ### buildConfig
 
@@ -132,13 +136,13 @@ The method you pass will receive two parameters, the current configuration in pl
 
 ### ChartConfig class
 
-### Built-in chart convenience methods
+### Built-in ChartConfig convenience methods
 
-### Additional chart methods
+### Additional ChartConfig methods
 
 ### OptionsConfig class
 
-### Build-in options convenience methods
+### Built-in OptionsConfig convenience methods
 
 All convenience methods follow the same paradigm:
 
@@ -164,7 +168,7 @@ If there is a second parameter, it is a *setter* of that value at the location o
 optionsConfig.global('useUTC', false);
 ```
 
-### Additional options methods
+### Additional OptionsConfig methods
 
 N/A.
 
