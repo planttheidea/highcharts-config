@@ -8,10 +8,10 @@
   * [buildConfig.addChartMethod](#buildconfigaddchartmethod)
   * [buildConfig.addOptionsMethod](#buildconfigaddoptionsmethod)
 * [ChartConfig](#chartconfig)
-  * [Built-in OptionsConfig convenience methods](built-in-chartconfig-convenience-methods)
+  * [Built-in OptionsConfig convenience methods](#built-in-chartconfig-convenience-methods)
   * [Additional OptionsConfig methods](#additional-chartconfig-methods)
 * [OptionsConfig](#optionsconfig)
-  * [Built-in OptionsConfig convenience methods](built-in-optionsconfig-convenience-methods)
+  * [Built-in OptionsConfig convenience methods](#built-in-optionsconfig-convenience-methods)
   * [Additional OptionsConfig methods](#additional-optionsconfig-methods)
 
 ### buildConfig
