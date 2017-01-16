@@ -57,6 +57,10 @@ export const OPTIONS_CONVENIENCE_METHOD_NAMES = [
  * @default
  */
 export const CHARTS_UNABLE_TO_BE_MIXED = [
+  'funnel',
   'gauge',
-  'solidgauge'
+  'heatmap',
+  'pyramid',
+  'solidgauge',
+  'treemap'
 ];
