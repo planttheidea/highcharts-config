@@ -45,7 +45,7 @@ Build a configuration object specific to charts (same as *buildConfig.chart*), w
 
 *options.validate(config: Object): boolean*
 
-Receives the current configuration object in plain object form and expects a boolean return from the function. You can use whatever validator you wish to pass in, and the only thing that is done with this information is that the return from the function is assigned to the *isValid* property on the ChartConfig instance.
+Receives the current configuration object in plain object form and expects a boolean return from the function. You can use whatever validator you wish to pass in, and the only thing that is done with this function is that the return is assigned to the *isValid* property on the ChartConfig instance for each chained method.
 
 ### buildConfig.chart
 
