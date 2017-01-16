@@ -63,9 +63,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
+	exports.__esModule = true;
 	
 	var _ChartConfig = __webpack_require__(2);
 	
@@ -182,15 +180,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
+	exports.__esModule = true;
 	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
 	var _isArray = __webpack_require__(3);
 	
@@ -250,162 +242,153 @@ return /******/ (function(modules) { // webpackBootstrap
 	  function ChartConfig() {
 	    _classCallCheck(this, ChartConfig);
 	
-	    return _possibleConstructorReturn(this, (ChartConfig.__proto__ || Object.getPrototypeOf(ChartConfig)).apply(this, arguments));
+	    return _possibleConstructorReturn(this, _Config.apply(this, arguments));
 	  }
 	
-	  _createClass(ChartConfig, [{
-	    key: 'addType',
+	  /**
+	   * @function addType
+	   *
+	   * @description
+	   * add a chart type with provided series
+	   *
+	   * @param {string} type chart type to add to config
+	   * @param {Array<Object>} seriesPassed data series to populate chart with
+	   * @returns {ChartConfig} new config class
+	   */
+	  ChartConfig.prototype.addType = function addType(type, seriesPassed) {
+	    var series = void 0;
 	
-	    /**
-	     * @function addType
-	     *
-	     * @description
-	     * add a chart type with provided series
-	     *
-	     * @param {string} type chart type to add to config
-	     * @param {Array<Object>} seriesPassed data series to populate chart with
-	     * @returns {ChartConfig} new config class
-	     */
-	    value: function addType(type, seriesPassed) {
-	      var series = void 0;
-	
-	      if ((0, _isArray2.default)(seriesPassed)) {
-	        series = seriesPassed;
-	      } else if ((0, _isPlainObject2.default)(seriesPassed)) {
-	        series = [seriesPassed];
-	      } else {
-	        throw new TypeError('Series passed must be either a plain object or an array of plain objects.');
-	      }
-	
-	      var config = (0, _utils.getNewConfigWithSeries)(this.config, (0, _utils.getNewChartSeries)(series, type));
-	
-	      return new ChartConfig(config, this.options);
+	    if ((0, _isArray2.default)(seriesPassed)) {
+	      series = seriesPassed;
+	    } else if ((0, _isPlainObject2.default)(seriesPassed)) {
+	      series = [seriesPassed];
+	    } else {
+	      throw new TypeError('Series passed must be either a plain object or an array of plain objects.');
 	    }
 	
-	    /**
-	     * @function getType
-	     *
-	     * @description
-	     * get a specific type (or a list of types) from the series in the config
-	     *
-	     * @param {Array<string>|string} types the type(s) to select from the config
-	     * @returns {Array<Object>|Object|null} the matching type(s)
-	     */
+	    var config = (0, _utils.getNewConfigWithSeries)(this.config, (0, _utils.getNewChartSeries)(series, type));
 	
-	  }, {
-	    key: 'getType',
-	    value: function getType(types) {
-	      var series = this.get('series');
-	      var length = series ? series.length : 0;
+	    return new ChartConfig(config, this.options);
+	  };
 	
-	      if (!length) {
-	        return null;
-	      }
+	  /**
+	   * @function getType
+	   *
+	   * @description
+	   * get a specific type (or a list of types) from the series in the config
+	   *
+	   * @param {Array<string>|string} types the type(s) to select from the config
+	   * @returns {Array<Object>|Object|null} the matching type(s)
+	   */
 	
-	      if ((0, _isUndefined2.default)(types)) {
-	        return (0, _utils.getFirstIfOnly)(series);
-	      }
 	
-	      return (0, _utils.getSpecificSeries)(series, (0, _utils.getArrayOfItem)(types));
+	  ChartConfig.prototype.getType = function getType(types) {
+	    var series = this.get('series');
+	    var length = series ? series.length : 0;
+	
+	    if (!length) {
+	      return null;
 	    }
 	
-	    /**
-	     * @function removeType
-	     *
-	     * @description
-	     * remove an instance of a chart type, all instances, or all charts
-	     *
-	     * @param {Array<number|string>|string} [chartPath] chart type with optional index
-	     * @returns {ChartConfig} new config class
-	     */
-	
-	  }, {
-	    key: 'removeType',
-	    value: function removeType(chartPath) {
-	      if ((0, _isUndefined2.default)(chartPath)) {
-	        return this.remove('series');
-	      }
-	
-	      var _config$series = this.config.series,
-	          currentSeries = _config$series === undefined ? [] : _config$series;
-	
-	
-	      if (!currentSeries.length) {
-	        return this;
-	      }
-	
-	      var _getPathArray = (0, _utils.getPathArray)(chartPath),
-	          _getPathArray2 = _slicedToArray(_getPathArray, 2),
-	          chart = _getPathArray2[0],
-	          indexString = _getPathArray2[1];
-	
-	      if ((0, _isUndefined2.default)(indexString)) {
-	        var series = currentSeries.filter(function (_ref) {
-	          var type = _ref.type;
-	
-	          return type !== chart;
-	        });
-	
-	        return this.set('series', series);
-	      }
-	
-	      var chartIndices = (0, _utils.getMatchingChartIndices)(currentSeries, chart);
-	      var indexNumber = +indexString;
-	      var indexToRemove = chartIndices[(0, _isNaN2.default)(indexNumber) ? 0 : indexNumber];
-	
-	      return (0, _isUndefined2.default)(indexToRemove) ? this : this.remove('series[' + indexToRemove + ']');
+	    if ((0, _isUndefined2.default)(types)) {
+	      return (0, _utils.getFirstIfOnly)(series);
 	    }
 	
-	    /**
-	     * @function updateType
-	     *
-	     * @description
-	     * update an existing type in the series of the config
-	     *
-	     * @param {Array<number|string>|string} chartPath chart type with optional index
-	     * @param {Object} seriesInstance value to update matching series instance to
-	     * @returns {ChartConfig} new config class
-	     */
+	    return (0, _utils.getSpecificSeries)(series, (0, _utils.getArrayOfItem)(types));
+	  };
 	
-	  }, {
-	    key: 'updateType',
-	    value: function updateType(chartPath, seriesInstance) {
-	      var _config$series2 = this.config.series,
-	          currentSeries = _config$series2 === undefined ? [] : _config$series2;
+	  /**
+	   * @function removeType
+	   *
+	   * @description
+	   * remove an instance of a chart type, all instances, or all charts
+	   *
+	   * @param {Array<number|string>|string} [chartPath] chart type with optional index
+	   * @returns {ChartConfig} new config class
+	   */
 	
 	
-	      var length = currentSeries.length;
-	
-	      if ((0, _isUndefined2.default)(chartPath) || !length) {
-	        return this;
-	      }
-	
-	      if (!(0, _isPlainObject2.default)(seriesInstance)) {
-	        throw new TypeError('Series passed must be a plain object.');
-	      }
-	
-	      var _getPathArray3 = (0, _utils.getPathArray)(chartPath),
-	          _getPathArray4 = _slicedToArray(_getPathArray3, 2),
-	          chart = _getPathArray4[0],
-	          indexString = _getPathArray4[1];
-	
-	      var indexNumber = +indexString;
-	      var chartIndices = (0, _utils.getMatchingChartIndices)(currentSeries, chart);
-	      var indexToUpdate = chartIndices[(0, _isNaN2.default)(indexNumber) ? 0 : indexNumber];
-	
-	      var key = 'series[' + indexToUpdate + ']';
-	      var existingSeries = this.get(key);
-	
-	      if ((0, _isUndefined2.default)(existingSeries)) {
-	        return this;
-	      }
-	
-	      var mergedSeries = _extends({}, existingSeries, seriesInstance);
-	      var series = (0, _utils.getNewChartSeries)([mergedSeries], chart);
-	
-	      return (0, _isUndefined2.default)(indexToUpdate) ? this : this.set(key, series[0]);
+	  ChartConfig.prototype.removeType = function removeType(chartPath) {
+	    if ((0, _isUndefined2.default)(chartPath)) {
+	      return this.remove('series');
 	    }
-	  }]);
+	
+	    var _config$series = this.config.series,
+	        currentSeries = _config$series === undefined ? [] : _config$series;
+	
+	
+	    if (!currentSeries.length) {
+	      return this;
+	    }
+	
+	    var _getPathArray = (0, _utils.getPathArray)(chartPath),
+	        chart = _getPathArray[0],
+	        indexString = _getPathArray[1];
+	
+	    if ((0, _isUndefined2.default)(indexString)) {
+	      var series = currentSeries.filter(function (_ref) {
+	        var type = _ref.type;
+	
+	        return type !== chart;
+	      });
+	
+	      return this.set('series', series);
+	    }
+	
+	    var chartIndices = (0, _utils.getMatchingChartIndices)(currentSeries, chart);
+	    var indexNumber = +indexString;
+	    var indexToRemove = chartIndices[(0, _isNaN2.default)(indexNumber) ? 0 : indexNumber];
+	
+	    return (0, _isUndefined2.default)(indexToRemove) ? this : this.remove('series[' + indexToRemove + ']');
+	  };
+	
+	  /**
+	   * @function updateType
+	   *
+	   * @description
+	   * update an existing type in the series of the config
+	   *
+	   * @param {Array<number|string>|string} chartPath chart type with optional index
+	   * @param {Object} seriesInstance value to update matching series instance to
+	   * @returns {ChartConfig} new config class
+	   */
+	
+	
+	  ChartConfig.prototype.updateType = function updateType(chartPath, seriesInstance) {
+	    var _config$series2 = this.config.series,
+	        currentSeries = _config$series2 === undefined ? [] : _config$series2;
+	
+	
+	    var length = currentSeries.length;
+	
+	    if ((0, _isUndefined2.default)(chartPath) || !length) {
+	      return this;
+	    }
+	
+	    if (!(0, _isPlainObject2.default)(seriesInstance)) {
+	      throw new TypeError('Series passed must be a plain object.');
+	    }
+	
+	    var _getPathArray2 = (0, _utils.getPathArray)(chartPath),
+	        chart = _getPathArray2[0],
+	        indexString = _getPathArray2[1];
+	
+	    var indexNumber = +indexString;
+	    var chartIndices = (0, _utils.getMatchingChartIndices)(currentSeries, chart);
+	    var indexToUpdate = chartIndices[(0, _isNaN2.default)(indexNumber) ? 0 : indexNumber];
+	
+	    var key = 'series[' + indexToUpdate + ']';
+	    var existingSeries = this.get(key);
+	
+	    if ((0, _isUndefined2.default)(existingSeries)) {
+	      return this;
+	    }
+	
+	    var mergedSeries = _extends({}, existingSeries, seriesInstance);
+	    var series = (0, _utils.getNewChartSeries)([mergedSeries], chart);
+	
+	    return (0, _isUndefined2.default)(indexToUpdate) ? this : this.set(key, series[0]);
+	  };
 	
 	  return ChartConfig;
 	}(_Config3.default);
@@ -4386,17 +4369,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
+	exports.__esModule = true;
 	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); // external dependencies
-	
-	
-	// utils
-	
 	
 	var _get2 = __webpack_require__(99);
 	
@@ -4426,7 +4401,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } // external dependencies
+	
+	
+	// utils
+	
 	
 	/**
 	 * @module classes/Config
@@ -4490,149 +4469,138 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 	
 	
-	  _createClass(Config, [{
-	    key: 'clear',
+	  /**
+	   * @function addConvenienceMethod
+	   * @static
+	   *
+	   * @description
+	   * add a convenience method to the constructor passed
+	   *
+	   * @param {function} Constructor constructor to assign method to prototype of
+	   * @param {Object} Constructor.prototype prototype to assign method to
+	   * @returns {function(string, (function|number)): (ChartConfig|OptionsConfig)} method to add convenience method
+	   */
+	  Config.addMethod = function addMethod(Constructor) {
+	    return function (methodName, method) {
+	      var methodToAssign = (0, _isFunction2.default)(method) ? (0, _utils.createAddMethodWrapper)(Constructor, method) : (0, _utils.createPropertyConvenienceMethod)(methodName);
+	
+	      Object.defineProperty(Constructor.prototype, methodName, {
+	        configurable: false,
+	        enumerable: false,
+	        value: methodToAssign,
+	        writable: true
+	      });
+	
+	      return Constructor;
+	    };
+	  };
+	
+	  /**
+	   * @function clear
+	   *
+	   * @description
+	   * clear out the current config and start anew
+	   *
+	   * @returns {Config} new config class
+	   */
 	
 	
-	    /**
-	     * @function clear
-	     *
-	     * @description
-	     * clear out the current config and start anew
-	     *
-	     * @returns {Config} new config class
-	     */
-	    value: function clear() {
-	      return new this.constructor({}, this.options);
+	  Config.prototype.clear = function clear() {
+	    return new this.constructor({}, this.options);
+	  };
+	
+	  /**
+	   * @function get
+	   *
+	   * @description
+	   * get a value from a path (top-level or nested) from the config
+	   *
+	   * @param {string} path path to retrieve from config
+	   * @returns {*} value at path
+	   */
+	
+	
+	  Config.prototype.get = function get(path) {
+	    return (0, _isUndefined2.default)(path) ? this.config : (0, _get3.default)(path, this.config);
+	  };
+	
+	  /**
+	   * @function merge
+	   *
+	   * @description
+	   * merge the configs passed to form a new config
+	   *
+	   * @returns {Config} new config class
+	   */
+	
+	
+	  Config.prototype.merge = function merge() {
+	    for (var _len = arguments.length, otherConfigs = Array(_len), _key = 0; _key < _len; _key++) {
+	      otherConfigs[_key] = arguments[_key];
 	    }
 	
-	    /**
-	     * @function get
-	     *
-	     * @description
-	     * get a value from a path (top-level or nested) from the config
-	     *
-	     * @param {string} path path to retrieve from config
-	     * @returns {*} value at path
-	     */
-	
-	  }, {
-	    key: 'get',
-	    value: function get(path) {
-	      return (0, _isUndefined2.default)(path) ? this.config : (0, _get3.default)(path, this.config);
+	    if (!otherConfigs.length) {
+	      return this;
 	    }
 	
-	    /**
-	     * @function merge
-	     *
-	     * @description
-	     * merge the configs passed to form a new config
-	     *
-	     * @returns {Config} new config class
-	     */
+	    var config = otherConfigs.reduce(function (newConfig, config) {
+	      return (0, _merge3.default)(newConfig, (0, _utils.getConfig)(Config, config));
+	    }, this.config);
 	
-	  }, {
-	    key: 'merge',
-	    value: function merge() {
-	      for (var _len = arguments.length, otherConfigs = Array(_len), _key = 0; _key < _len; _key++) {
-	        otherConfigs[_key] = arguments[_key];
-	      }
+	    return new this.constructor(config, this.options);
+	  };
 	
-	      if (!otherConfigs.length) {
-	        return this;
-	      }
+	  /**
+	   * @function remove
+	   *
+	   * @description
+	   * remove item at path (top-level or nested) in the config
+	   *
+	   * @param {string} paths path to remove from config
+	   * @returns {Config} new config class
+	   */
 	
-	      var config = otherConfigs.reduce(function (newConfig, config) {
-	        return (0, _merge3.default)(newConfig, (0, _utils.getConfig)(Config, config));
-	      }, this.config);
 	
-	      return new this.constructor(config, this.options);
+	  Config.prototype.remove = function remove(paths) {
+	    var keys = (0, _utils.getArrayOfItem)(paths);
+	
+	    var config = (0, _utils.removeOrOmit)(keys, this.config);
+	
+	    return new this.constructor(config, this.options);
+	  };
+	
+	  /**
+	   * @function set
+	   *
+	   * @param {string} path path to set in config
+	   * @param {*} value value to assign to path
+	   * @returns {Config} new config class
+	   */
+	
+	
+	  Config.prototype.set = function set(path, value) {
+	    if ((0, _isUndefined2.default)(path)) {
+	      return this;
 	    }
 	
-	    /**
-	     * @function remove
-	     *
-	     * @description
-	     * remove item at path (top-level or nested) in the config
-	     *
-	     * @param {string} paths path to remove from config
-	     * @returns {Config} new config class
-	     */
+	    var config = (0, _isPlainObject2.default)(path) ? (0, _utils.getNewConfigFromObject)(this.config, path) : (0, _set3.default)(path, value, this.config);
 	
-	  }, {
-	    key: 'remove',
-	    value: function remove(paths) {
-	      var keys = (0, _utils.getArrayOfItem)(paths);
+	    return new this.constructor(config, this.options);
+	  };
 	
-	      var config = (0, _utils.removeOrOmit)(keys, this.config);
-	
-	      return new this.constructor(config, this.options);
-	    }
-	
-	    /**
-	     * @function set
-	     *
-	     * @param {string} path path to set in config
-	     * @param {*} value value to assign to path
-	     * @returns {Config} new config class
-	     */
-	
-	  }, {
-	    key: 'set',
-	    value: function set(path, value) {
-	      if ((0, _isUndefined2.default)(path)) {
-	        return this;
-	      }
-	
-	      var config = (0, _isPlainObject2.default)(path) ? (0, _utils.getNewConfigFromObject)(this.config, path) : (0, _set3.default)(path, value, this.config);
-	
-	      return new this.constructor(config, this.options);
-	    }
-	
-	    /**
-	     * @function toString
-	     *
-	     * @description
-	     * return stringified config
-	     *
-	     * @returns {string} stringified config
-	     */
-	
-	  }, {
-	    key: 'toString',
-	    value: function toString() {
-	      return JSON.stringify(this.config, null, 2);
-	    }
-	  }], [{
-	    key: 'addMethod',
+	  /**
+	   * @function toString
+	   *
+	   * @description
+	   * return stringified config
+	   *
+	   * @returns {string} stringified config
+	   */
 	
 	
-	    /**
-	     * @function addConvenienceMethod
-	     * @static
-	     *
-	     * @description
-	     * add a convenience method to the constructor passed
-	     *
-	     * @param {function} Constructor constructor to assign method to prototype of
-	     * @param {Object} Constructor.prototype prototype to assign method to
-	     * @returns {function(string, (function|number)): (ChartConfig|OptionsConfig)} method to add convenience method
-	     */
-	    value: function addMethod(Constructor) {
-	      return function (methodName, method) {
-	        var methodToAssign = (0, _isFunction2.default)(method) ? (0, _utils.createAddMethodWrapper)(Constructor, method) : (0, _utils.createPropertyConvenienceMethod)(methodName);
-	
-	        Object.defineProperty(Constructor.prototype, methodName, {
-	          configurable: false,
-	          enumerable: false,
-	          value: methodToAssign,
-	          writable: true
-	        });
-	
-	        return Constructor;
-	      };
-	    }
-	  }]);
+	  Config.prototype.toString = function toString() {
+	    return JSON.stringify(this.config, null, 2);
+	  };
 	
 	  return Config;
 	}();
@@ -5632,14 +5600,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
+	exports.__esModule = true;
 	exports.removeOrOmit = exports.getSpecificSeries = exports.getNewConfigWithSeries = exports.getNewConfigFromObject = exports.getNewChartSeries = exports.getMatchingChartIndices = exports.getFirstIfOnly = exports.isMixedChartType = exports.createPropertyConvenienceMethod = exports.canCombineChartTypes = exports.getNamespacedKey = exports.getDefaultSeries = exports.getConfig = exports.getPathArray = exports.getArrayOfItem = exports.createBuildConfig = exports.createAddMethodWrapper = exports.createAddMethod = undefined;
 	
-	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; // external dependencies
 	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	// constants
+	
 	
 	var _get = __webpack_require__(99);
 	
@@ -5680,14 +5648,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _constants = __webpack_require__(139);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-	
-	function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); } // external dependencies
-	
-	
-	// constants
-	
 	
 	var keys = Object.keys;
 	
@@ -5917,9 +5877,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return false;
 	  }
 	
-	  var _series = _toArray(series),
-	      firstItem = _series[0],
-	      restOfSeries = _series.slice(1);
+	  var firstItem = series[0],
+	      restOfSeries = series.slice(1);
 	
 	  var originalType = firstItem.type;
 	
@@ -5950,7 +5909,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return series.reduce(function (indices, _ref3, seriesIndex) {
 	    var type = _ref3.type;
 	
-	    return type !== chart ? indices : [].concat(_toConsumableArray(indices), [seriesIndex]);
+	    return type !== chart ? indices : [].concat(indices, [seriesIndex]);
 	  }, []);
 	};
 	
@@ -6005,7 +5964,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns {Object} new configuration object
 	 */
 	var getNewConfigWithSeries = exports.getNewConfigWithSeries = function getNewConfigWithSeries(config, series) {
-	  var updatedSeries = [].concat(_toConsumableArray(getDefaultSeries(config)), _toConsumableArray(series));
+	  var updatedSeries = [].concat(getDefaultSeries(config), series);
 	
 	  if (isMixedChartType(updatedSeries) && !canCombineChartTypes(updatedSeries)) {
 	    throw new TypeError('Cannot combine these chart types.');
@@ -6035,10 +5994,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var specificSeries = types.reduce(function (matchingSeries, type) {
 	    var _getPathArray = getPathArray(type);
 	
-	    var _getPathArray2 = _slicedToArray(_getPathArray, 2);
-	
-	    chart = _getPathArray2[0];
-	    indexOfChart = _getPathArray2[1];
+	    chart = _getPathArray[0];
+	    indexOfChart = _getPathArray[1];
 	
 	
 	    matches = series.filter(function (_ref4) {
@@ -6048,12 +6005,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    });
 	
 	    if ((0, _isUndefined2.default)(indexOfChart)) {
-	      return [].concat(_toConsumableArray(matchingSeries), _toConsumableArray(matches));
+	      return [].concat(matchingSeries, matches);
 	    }
 	
 	    match = matches[+indexOfChart];
 	
-	    return (0, _isUndefined2.default)(match) ? matchingSeries : [].concat(_toConsumableArray(matchingSeries), [match]);
+	    return (0, _isUndefined2.default)(match) ? matchingSeries : [].concat(matchingSeries, [match]);
 	  }, []);
 	
 	  return getFirstIfOnly(specificSeries);
@@ -6322,9 +6279,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
+	exports.__esModule = true;
 	/**
 	 * @module constants
 	 */
@@ -6362,9 +6317,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
+	exports.__esModule = true;
 	
 	var _Config2 = __webpack_require__(98);
 	
@@ -6400,7 +6353,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  function OptionsConfig() {
 	    _classCallCheck(this, OptionsConfig);
 	
-	    return _possibleConstructorReturn(this, (OptionsConfig.__proto__ || Object.getPrototypeOf(OptionsConfig)).apply(this, arguments));
+	    return _possibleConstructorReturn(this, _Config.apply(this, arguments));
 	  }
 	
 	  return OptionsConfig;

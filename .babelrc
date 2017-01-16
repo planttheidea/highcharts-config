@@ -4,9 +4,15 @@
   ],
   "presets": [
     [
-      "latest",
+      "env",
       {
-        "loose": true
+        "loose": true,
+        "targets": {
+          "browsers": [
+            "last 2 versions",
+            "ie >= 9"
+          ]
+        }
       }
     ],
     "stage-2"
