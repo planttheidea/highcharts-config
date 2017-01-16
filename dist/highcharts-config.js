@@ -186,6 +186,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -391,13 +393,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var chartIndices = (0, _utils.getMatchingChartIndices)(currentSeries, chart);
 	      var indexToUpdate = chartIndices[(0, _isNaN2.default)(indexNumber) ? 0 : indexNumber];
 	
-	      if (indexToUpdate >= length) {
+	      var key = 'series[' + indexToUpdate + ']';
+	      var existingSeries = this.get(key);
+	
+	      if ((0, _isUndefined2.default)(existingSeries)) {
 	        return this;
 	      }
 	
-	      var series = (0, _utils.getNewChartSeries)([seriesInstance], chart);
+	      var mergedSeries = _extends({}, existingSeries, seriesInstance);
+	      var series = (0, _utils.getNewChartSeries)([mergedSeries], chart);
 	
-	      return (0, _isUndefined2.default)(indexToUpdate) ? this : this.set('series[' + indexToUpdate + ']', series[0]);
+	      return (0, _isUndefined2.default)(indexToUpdate) ? this : this.set(key, series[0]);
 	    }
 	  }]);
 	
@@ -6330,7 +6336,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @type {Array<string>}
 	 * @desfault
 	 */
-	var CHART_CONVENIENCE_METHOD_NAMES = exports.CHART_CONVENIENCE_METHOD_NAMES = ['accessibility', 'chart', 'colorAxis', 'colors', 'credits', 'data', 'defs', 'drilldown', 'exporting', 'labels', 'legend', 'loading', 'navigation', 'noData', 'pane', 'plotOptions', 'responsive', 'series', 'subtitle', 'title', 'tooltip', 'xAxis', 'yAxis', 'zAxis'];
+	var CHART_CONVENIENCE_METHOD_NAMES = exports.CHART_CONVENIENCE_METHOD_NAMES = ['accessibility', 'chart', 'colorAxis', 'colors', 'credits', 'data', 'defs', 'drilldown', 'exporting', 'labels', 'legend', 'loading', 'mapNavigation', 'navigation', 'noData', 'pane', 'plotOptions', 'responsive', 'series', 'subtitle', 'title', 'tooltip', 'xAxis', 'yAxis', 'zAxis'];
 	
 	/**
 	 * @private

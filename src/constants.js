@@ -22,6 +22,7 @@ export const CHART_CONVENIENCE_METHOD_NAMES = [
   'labels',
   'legend',
   'loading',
+  'mapNavigation',
   'navigation',
   'noData',
   'pane',

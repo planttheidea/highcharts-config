@@ -160,13 +160,20 @@ class ChartConfig extends Config {
     const chartIndices = getMatchingChartIndices(currentSeries, chart);
     const indexToUpdate = chartIndices[isNAN(indexNumber) ? 0 : indexNumber];
 
-    if (indexToUpdate >= length) {
+    const key = `series[${indexToUpdate}]`;
+    const existingSeries = this.get(key);
+
+    if (isUndefined(existingSeries)) {
       return this;
     }
 
-    const series = getNewChartSeries([seriesInstance], chart);
+    const mergedSeries = {
+      ...existingSeries,
+      ...seriesInstance
+    };
+    const series = getNewChartSeries([mergedSeries], chart);
 
-    return isUndefined(indexToUpdate) ? this : this.set(`series[${indexToUpdate}]`, series[0]);
+    return isUndefined(indexToUpdate) ? this : this.set(key, series[0]);
   }
 }
 
