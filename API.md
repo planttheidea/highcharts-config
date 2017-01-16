@@ -3,10 +3,11 @@
 ### Table of contents
 
 * [buildConfig](#buildconfig)
-* [buildConfig.chart](#buildconfigchart)
-* [buildConfig.options](#buildconfigoptions)
-* [buildConfig.addChartMethod](#buildconfigaddchartmethod)
-* [buildConfig.addOptionsMethod](#buildconfigaddoptionsmethod)
+  * [buildConfig.chart](#buildconfigchart)
+  * [buildConfig.options](#buildconfigoptions)
+  * [buildConfig.addChartMethod](#buildconfigaddchartmethod)
+  * [buildConfig.addOptionsMethod](#buildconfigaddoptionsmethod)
+* [ChartConfig class](#chartconfig-class)
 
 ### buildConfig
 
@@ -127,3 +128,5 @@ buildConfig.addOptionsMethod('log', (config, configInstance) => {
 Accepts the name of the method and the method itself, and returns the *buildConfig* method for chaining multiple usages of *addOptionsMethod*. This method is useful for development-specific configurations, or if you are using a plugin and want to create a convenience method specific to it.
 
 The method you pass will receive two parameters, the current configuration in plain object form, and the configuration instance itself. If you return a plain object from this method, it will assume you made modifications to the configuration and will assign that return to a new configuration instance. If you return anything other than a plain object, it will simply continue the chaining.
+
+### ChartConfig class
