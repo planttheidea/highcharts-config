@@ -163,7 +163,7 @@ const title = chartConfig.title('text');
 If there is a second parameter, it is a *setter* of that value at the location of the first parameter's location. When using a string, you can use path notation for deeply-nested values. Returns a new ChartConfig instance with the updated configuration values.
 
 ```javascript
-chartConfig.yAxis('title.text', 'My Fancy Chart);
+chartConfig.yAxis('title.text', 'My Fancy Chart');
 ```
 
 The list of available convenience methods:
