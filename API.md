@@ -226,7 +226,7 @@ const yAxisTitle = chartConfig.get('yAxis.title.text');
 
 If a path is provided, returns the value on the configuration object at that path, else returns the entire config
 
-`getType(type: (Array<string>|string)): (Array<Objet>|Object)`
+`getType(type: (Array<string>|string)): (Array<Object>|Object)`
 
 ```javascript
 // single type
