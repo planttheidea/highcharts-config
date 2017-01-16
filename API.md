@@ -30,7 +30,7 @@ const OPTIONS = {
   }
 };
 
-const config = buildConfig(INITIAL_CONFIG, OPTIONS);
+const configInstance = buildConfig(INITIAL_CONFIG, OPTIONS);
 ```
 
 `buildConfig([config: (ChartConfig|Object) = {}[, options: Object = {}]]): ChartConfig`
@@ -205,10 +205,14 @@ Add a chart type to the configuration, with the series data provided. You can us
 `get([path: string]): ChartConfig`
 
 ```javascript
+// get a specific property
 const yAxisTitle = chartConfig.get('yAxis.title.text');
+
+// or the whole config
+Highcharts.chart('#chart', chartConfig.get());
 ```
 
-If a path is provided, returns the value on the configuration object at that path, else returns the entire config
+If a path is provided, returns the value on the configuration object at that path, else returns the entire config.
 
 `getType(type: (Array<string>|string)): (Array<Object>|Object)`
 
