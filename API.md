@@ -2,6 +2,12 @@
 
 ### Table of contents
 
+* [buildConfig](#buildconfig)
+* [buildConfig.chart](#buildconfigchart)
+* [buildConfig.options](#buildconfigoptions)
+* [buildConfig.addChartMethod](#buildconfigaddchartmethod)
+* [buildConfig.addOptionsMethod](#buildconfigaddoptionsmethod)
+
 ### buildConfig
 
 ```javascript
