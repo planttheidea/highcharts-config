@@ -2,6 +2,12 @@
 
 ### Table of contents
 
+* [Installation](#installation)
+* [Usage](#usage)
+* [Summary](#summary)
+* [API](#api)
+* [Development](#development)
+
 ### Installation
 
 **yarn**
@@ -49,9 +55,9 @@ const config = buildConfig()
 
 ### Summary
 
-Highcharts is a fantastic charting library, but it's configuration can be daunting and confusing. `highcharts-config` tries to simplify this process with a natural API and a focus on reusability. There are chainable convenience methods for both configuration types, and each step in the chain returns a new instance so it can be stored and reused.
+Highcharts is a fantastic charting library, but it's configuration can be daunting and confusing. `highcharts-config` tries to simplify this process with a natural API and a focus on reusability. There are chainable convenience methods for both chart and global options configurations, and each step in the chain returns a new instance so it can be stored and reused.
 
-It should be noted that while the construct of immutability is applied when updating the configurations, it is not rigidly enforced (Highcharts appears to bark when the configuration is deeply frozen). This means you can mutate the configuration directly without the use of the API, however it is highly discouraged.
+It should be noted that while the construct of immutability is applied when updating the configurations, it is not rigidly enforced (Highcharts barks when the configuration is deeply frozen). This means you can mutate the configuration directly without the use of the API, however it is highly discouraged.
 
 ### API
 
