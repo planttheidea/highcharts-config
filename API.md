@@ -35,15 +35,7 @@ const config = buildConfig(INITIAL_CONFIG, OPTIONS);
 
 `buildConfig([config: (ChartConfig|Object) = {}[, options: Object = {}]]): ChartConfig`
 
-Build a configuration object specific to charts (same as *buildConfig.chart*), with the accompanying convenience methods.
-
-*config (defaults to {})*
-
-Initial configuration object to populate with, either as a plain object or an existing ChartConfig instance.
-
-*options (defaults to {})*
-
-Options to apply to the configuration, with all properties optional. Takes the following shape:
+Build a configuration object specific to charts (same as *buildConfig.chart*), with the accompanying convenience methods. Accepts the initial configuration object to populate with, either as a plain object or an existing ChartConfig instance, and any options to apply to the configuration, with all properties optional. Takes the following shape:
 
 ```
 {
@@ -78,15 +70,7 @@ const config = buildConfig(INITIAL_CONFIG, OPTIONS);
 
 `buildConfig.options(config: (Object|OptionsConfig) = {}[, options: Object = {}]])`
 
-Build a configuration object spcific to options, with the accompanying convenience methods.
-
-*config (defaults to {})*
-
-Initial configuration object to populate with, either as a plain object or an existing ChartConfig instance.
-
-*options (defaults to {})*
-
-Options to apply to the configuration, with all properties optional. Takes the following shape:
+Build a configuration object specific to global options, with the accompanying convenience methods. Accepts the initial configuration object to populate with, either as a plain object or an existing OptionsConfig instance, and any options to apply to the configuration, with all properties optional. Takes the following shape:
 
 ```
 {
@@ -117,7 +101,7 @@ The method you pass will receive two parameters, the current configuration in pl
 ```javascript
 buildConfig.addOptionsMethod('log', (config, configInstance) => {
  const useUTC = config.global.getTimezoneOffset() === 0;
- 
+ ChartConfig
  return {
   ...config,
   global: {
