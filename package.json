@@ -20,7 +20,7 @@
   "dependencies": {
     "lodash": "^4.17.4"
   },
-  "description": "Declarative Highcharts configuration generator with immutable, chainable API",
+  "description": "Declarative Highcharts configuration builder with an immutable, chainable API",
   "devDependencies": {
     "ava": "^0.17.0",
     "babel": "^6.5.2",
