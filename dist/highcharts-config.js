@@ -6354,7 +6354,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @type {Array<string>}
 	 * @default
 	 */
-	var CHARTS_UNABLE_TO_BE_MIXED = exports.CHARTS_UNABLE_TO_BE_MIXED = ['gauge', 'solidgauge'];
+	var CHARTS_UNABLE_TO_BE_MIXED = exports.CHARTS_UNABLE_TO_BE_MIXED = ['funnel', 'gauge', 'heatmap', 'pyramid', 'solidgauge', 'treemap'];
 
 /***/ },
 /* 140 */
