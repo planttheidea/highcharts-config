@@ -1,6 +1,3 @@
-const webpack = require('webpack');
-const OptimizeJsPlugin = require('optimize-js-plugin');
-
 const defaultConfig = require('./webpack.config');
 
 module.exports = Object.assign({}, defaultConfig, {
@@ -11,10 +8,4 @@ module.exports = Object.assign({}, defaultConfig, {
   output: Object.assign({}, defaultConfig.output, {
     filename: 'highcharts-config.min.js',
   }),
-
-  plugins: defaultConfig.plugins.concat([
-    new OptimizeJsPlugin({
-      sourceMap: false,
-    }),
-  ]),
 });

@@ -1,13 +1,13 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("unchanged"));
+		module.exports = factory();
 	else if(typeof define === 'function' && define.amd)
-		define("buildConfig", ["unchanged"], factory);
+		define("buildConfig", [], factory);
 	else if(typeof exports === 'object')
-		exports["buildConfig"] = factory(require("unchanged"));
+		exports["buildConfig"] = factory();
 	else
-		root["buildConfig"] = factory(root["unchanged"]);
-})(window, function(__WEBPACK_EXTERNAL_MODULE_unchanged__) {
+		root["buildConfig"] = factory();
+})(window, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -95,6 +95,112 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ })
 /************************************************************************/
 /******/ ({
+
+/***/ "./node_modules/curriable/dist/curriable.js":
+/*!**************************************************!*\
+  !*** ./node_modules/curriable/dist/curriable.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+(function (global, factory) {
+   true ? factory(exports) :
+  undefined;
+}(this, function (exports) { 'use strict';
+
+  /**
+   * @constant __ placeholder used when parameters are skipped
+   */
+  var __ = typeof Symbol === 'function' ? Symbol('curriable placeholder') : 0xedd1;
+  /**
+   * @function recursiveCurry
+   *
+   * @description
+   * recursively curry over the arguments until all have been resolved
+   *
+   * @param fn the function to curry
+   * @param arity the length of the function to curry until
+   * @param args the existing arguments
+   * @returns the result of the function call
+   */
+  var recursiveCurry = function (fn, arity, args) {
+      return function () {
+          var length = args.length;
+          var newArgs = arguments;
+          var newArgsLength = newArgs.length;
+          var combined = [];
+          var newArgsIndex = 0;
+          var remaining = arity;
+          var value;
+          if (length) {
+              for (var index = 0; index < length; index++) {
+                  value = combined[index] =
+                      args[index] === __ && newArgsIndex < newArgsLength
+                          ? newArgs[newArgsIndex++]
+                          : args[index];
+                  if (value !== __) {
+                      --remaining;
+                  }
+              }
+          }
+          if (newArgsIndex < newArgsLength) {
+              for (; newArgsIndex < newArgsLength; newArgsIndex++) {
+                  value = newArgs[newArgsIndex];
+                  combined.push(value);
+                  if (value !== __ && newArgsIndex < arity) {
+                      --remaining;
+                  }
+              }
+          }
+          return remaining > 0
+              ? recursiveCurry(fn, arity, combined)
+              : fn.apply(this, combined);
+      };
+  };
+
+  // utils
+  /**
+   * @function curry
+   *
+   * @description
+   * get the method passed as a curriable method based on its parameters
+   *
+   * @param fn the method to make curriable
+   * @param arity the arity of the curried method
+   * @returns the fn passed as a curried function
+   */
+  var curry = function (fn, arity) {
+      if (arity === void 0) { arity = fn.length; }
+      var curried = recursiveCurry(fn, arity, []);
+      curried.arity = arity;
+      curried.fn = fn;
+      return curried;
+  };
+  curry.__ = __;
+  /**
+   * @function uncurry
+   *
+   * @description
+   * return a function that is the non-curried version of the fn passed
+   *
+   * @param curried the curried function to uncurry
+   * @returns the original fn
+   */
+  var uncurry = function (curried) { return curried.fn; };
+  curry.uncurry = uncurry;
+
+  exports.__ = __;
+  exports.curry = curry;
+  exports.uncurry = uncurry;
+  exports.default = curry;
+
+  Object.defineProperty(exports, '__esModule', { value: true });
+
+}));
+//# sourceMappingURL=curriable.js.map
+
+
+/***/ }),
 
 /***/ "./node_modules/pathington/es/constants.js":
 /*!*************************************************!*\
@@ -361,33 +467,772 @@ var parseStringPath = function parseStringPath(path) {
 
 /***/ }),
 
+/***/ "./node_modules/unchanged/es/index.js":
+/*!********************************************!*\
+  !*** ./node_modules/unchanged/es/index.js ***!
+  \********************************************/
+/*! exports provided: __, assign, call, get, getOr, has, merge, remove, set, transform, add */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "assign", function() { return assign; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "call", function() { return call; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "get", function() { return get; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getOr", function() { return getOr; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "has", function() { return has; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "merge", function() { return merge; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "remove", function() { return remove; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "set", function() { return set; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "transform", function() { return transform; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "add", function() { return add; });
+/* harmony import */ var curriable__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! curriable */ "./node_modules/curriable/dist/curriable.js");
+/* harmony import */ var curriable__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(curriable__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "__", function() { return curriable__WEBPACK_IMPORTED_MODULE_0__["__"]; });
+
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils */ "./node_modules/unchanged/es/utils.js");
+// external dependencies
+ // utils
+
+
+
+/**
+ * @function assign
+ *
+ * @description
+ * get the shallowly-merged object at path
+ *
+ * @param {Array<number|string>|null|number|string} path the path to match on the object
+ * @param {Array<*>|Object} objectToAssign the object to merge
+ * @param {Array<*>|Object} object the object to merge with
+ * @returns {Array<*>|Object} the new merged object
+ */
+
+var assign = Object(curriable__WEBPACK_IMPORTED_MODULE_0__["curry"])(function (path, objectToAssign, object) {
+  if (!Object(_utils__WEBPACK_IMPORTED_MODULE_1__["isCloneable"])(object)) {
+    return objectToAssign;
+  }
+
+  return Object(_utils__WEBPACK_IMPORTED_MODULE_1__["isEmptyPath"])(path) ? Object(_utils__WEBPACK_IMPORTED_MODULE_1__["getMergedObject"])(object, objectToAssign, false) : Object(_utils__WEBPACK_IMPORTED_MODULE_1__["getDeepClone"])(path, object, function (ref, key) {
+    ref[key] = Object(_utils__WEBPACK_IMPORTED_MODULE_1__["getMergedObject"])(ref[key], objectToAssign, false);
+  });
+});
+/**
+ * @function call
+ *
+ * @description
+ * call a nested method at the path requested with the parameters provided
+ *
+ * @param {Array<number|string>|null|number|string} path the path to get the value at
+ * @param {Array<*>} parameters the parameters to call the method with
+ * @param {Array<*>|Object} object the object to call the method from
+ * @param {*} context the context to set as "this" in the function call
+ */
+
+var call = Object(curriable__WEBPACK_IMPORTED_MODULE_0__["curry"])(function (path, parameters, object, context) {
+  if (context === void 0) {
+    context = object;
+  }
+
+  return Object(_utils__WEBPACK_IMPORTED_MODULE_1__["isEmptyPath"])(path) ? Object(_utils__WEBPACK_IMPORTED_MODULE_1__["callIfFunction"])(object, context, parameters) : Object(_utils__WEBPACK_IMPORTED_MODULE_1__["callNestedProperty"])(path, context, parameters, object);
+}, // eslint-disable-next-line no-magic-numbers
+3);
+/**
+ * @function get
+ *
+ * @description
+ * get the value to the object at the path requested
+ *
+ * @param {Array<number|string>|null|number|string} path the path to get the value at
+ * @param {Array<*>|Object} object the object to get the value from
+ * @returns {*} the value requested
+ */
+
+var get = Object(curriable__WEBPACK_IMPORTED_MODULE_0__["curry"])(function (path, object) {
+  return Object(_utils__WEBPACK_IMPORTED_MODULE_1__["isEmptyPath"])(path) ? object : Object(_utils__WEBPACK_IMPORTED_MODULE_1__["getNestedProperty"])(path, object);
+});
+/**
+ * @function getOr
+ *
+ * @description
+ * get the value to the object at the path requested, or noMatchValue if nothing
+ * is there.
+ *
+ * @param {*} noMatchValue the fallback value if nothing is found at the given path
+ * @param {Array<number|string>|null|number|string} path the path to get the value at
+ * @param {Array<*>|Object} object the object to get the value from
+ * @returns {*} the value requested
+ */
+
+var getOr = Object(curriable__WEBPACK_IMPORTED_MODULE_0__["curry"])(function (noMatchValue, path, object) {
+  return Object(_utils__WEBPACK_IMPORTED_MODULE_1__["isEmptyPath"])(path) ? object : Object(_utils__WEBPACK_IMPORTED_MODULE_1__["getNestedProperty"])(path, object, noMatchValue);
+});
+/**
+ * @function has
+ *
+ * @description
+ * does the nested path exist on the object
+ *
+ * @param {Array<number|string>|null|number|string} path the path to match on the object
+ * @param {Array<*>|Object} object the object to get the value from
+ * @returns {boolean} does the path exist
+ */
+
+/* eslint-disable eqeqeq */
+
+var has = Object(curriable__WEBPACK_IMPORTED_MODULE_0__["curry"])(function (path, object) {
+  return Object(_utils__WEBPACK_IMPORTED_MODULE_1__["isEmptyPath"])(path) ? object != null : Object(_utils__WEBPACK_IMPORTED_MODULE_1__["hasNestedProperty"])(path, object);
+});
+/* eslint-enable */
+
+/**
+ * @function merge
+ *
+ * @description
+ * get the deeply-merged object at path
+ *
+ * @param {Array<number|string>|null|number|string} path the path to match on the object
+ * @param {Array<*>|Object} objectToMerge the object to merge
+ * @param {Array<*>|Object} object the object to merge with
+ * @returns {Array<*>|Object} the new merged object
+ */
+
+var merge = Object(curriable__WEBPACK_IMPORTED_MODULE_0__["curry"])(function (path, objectToMerge, object) {
+  if (!Object(_utils__WEBPACK_IMPORTED_MODULE_1__["isCloneable"])(object)) {
+    return objectToMerge;
+  }
+
+  return Object(_utils__WEBPACK_IMPORTED_MODULE_1__["isEmptyPath"])(path) ? Object(_utils__WEBPACK_IMPORTED_MODULE_1__["getMergedObject"])(object, objectToMerge, true) : Object(_utils__WEBPACK_IMPORTED_MODULE_1__["getDeepClone"])(path, object, function (ref, key) {
+    ref[key] = Object(_utils__WEBPACK_IMPORTED_MODULE_1__["getMergedObject"])(ref[key], objectToMerge, true);
+  });
+});
+/**
+ * @function removeobject with quoted keys
+ *
+ * @description
+ * remove the value in the object at the path requested
+ *
+ * @param {Array<number|string>|number|string} path the path to remove the value at
+ * @param {Array<*>|Object} object the object to remove the value from
+ * @returns {Array<*>|Object} a new object with the same structure and the value removed
+ */
+
+var remove = Object(curriable__WEBPACK_IMPORTED_MODULE_0__["curry"])(function (path, object) {
+  if (Object(_utils__WEBPACK_IMPORTED_MODULE_1__["isEmptyPath"])(path)) {
+    return Object(_utils__WEBPACK_IMPORTED_MODULE_1__["getNewEmptyObject"])(object);
+  }
+
+  return Object(_utils__WEBPACK_IMPORTED_MODULE_1__["hasNestedProperty"])(path, object) ? Object(_utils__WEBPACK_IMPORTED_MODULE_1__["getDeepClone"])(path, object, function (ref, key) {
+    if (Object(_utils__WEBPACK_IMPORTED_MODULE_1__["isArray"])(ref)) {
+      Object(_utils__WEBPACK_IMPORTED_MODULE_1__["splice"])(ref, key);
+    } else {
+      delete ref[key];
+    }
+  }) : object;
+});
+/**
+ * @function set
+ *
+ * @description
+ * set the value in the object at the path requested
+ *
+ * @param {Array<number|string>|number|string} path the path to set the value at
+ * @param {*} value the value to set
+ * @param {Array<*>|Object} object the object to set the value in
+ * @returns {Array<*>|Object} a new object with the same structure and the value assigned
+ */
+
+var set = Object(curriable__WEBPACK_IMPORTED_MODULE_0__["curry"])(function (path, value, object) {
+  return Object(_utils__WEBPACK_IMPORTED_MODULE_1__["isEmptyPath"])(path) ? value : Object(_utils__WEBPACK_IMPORTED_MODULE_1__["getDeepClone"])(path, object, function (ref, key) {
+    ref[key] = value;
+  });
+});
+/**
+ * @function transform
+ *
+ * @description
+ * perform same operation as set, but using a callback function that receives
+ * the value (and additional parameters, if provided) to get the value to set
+ *
+ * @param {Array<number|string>|number|string} path the path to set the value at
+ * @param {function} fn the function to transform the retrieved value with
+ * @param {Array<*>|Object} object the object to set the value in
+ * @param {...Array<any>} extraArgs additional arguments to pass to the transform function
+ * @returns {Array<*>|Object} a new object with the same structure and the value assigned
+ */
+
+var transform = Object(curriable__WEBPACK_IMPORTED_MODULE_0__["curry"])(function (path, fn, object) {
+  for (var _len = arguments.length, extraArgs = new Array(_len > 3 ? _len - 3 : 0), _key = 3; _key < _len; _key++) {
+    extraArgs[_key - 3] = arguments[_key];
+  }
+
+  return Object(_utils__WEBPACK_IMPORTED_MODULE_1__["isEmptyPath"])(path) ? fn.apply(void 0, [object].concat(extraArgs)) : Object(_utils__WEBPACK_IMPORTED_MODULE_1__["getDeepClone"])(path, object, function (ref, key) {
+    return ref[key] = fn.apply(void 0, [ref[key]].concat(extraArgs));
+  });
+}, // eslint-disable-next-line no-magic-numbers
+3);
+/**
+ * @function add
+ *
+ * @description
+ * add the value to the object at the path requested
+ *
+ * @param {Array<number|string>|null|number|string} path the path to assign the value at
+ * @param {*} value the value to assign
+ * @param {Array<*>|Object} object the object to assignobject the value in
+ * @returns {Array<*>|Object} a new object with the same structure and the value added
+ */
+
+var add = Object(curriable__WEBPACK_IMPORTED_MODULE_0__["curry"])(function (path, value, object) {
+  var isPathEmpty = Object(_utils__WEBPACK_IMPORTED_MODULE_1__["isEmptyPath"])(path);
+  var valueAtPath = isPathEmpty ? object : Object(_utils__WEBPACK_IMPORTED_MODULE_1__["getNestedProperty"])(path, object);
+  var fullPath = Object(_utils__WEBPACK_IMPORTED_MODULE_1__["isArray"])(valueAtPath) ? Object(_utils__WEBPACK_IMPORTED_MODULE_1__["isArray"])(path) ? path.concat([valueAtPath.length]) : (isPathEmpty ? '' : path) + "[" + valueAtPath.length + "]" : path;
+  return set(fullPath, value, object);
+});
+
+/***/ }),
+
+/***/ "./node_modules/unchanged/es/utils.js":
+/*!********************************************!*\
+  !*** ./node_modules/unchanged/es/utils.js ***!
+  \********************************************/
+/*! exports provided: isArray, cloneArray, reduce, getOwnProperties, assignFallback, isCloneable, isGlobalConstructor, callIfFunction, getShallowClone, getNewEmptyChild, getNewEmptyObject, cloneIfPossible, getNewChildClone, getCoalescedValue, onMatchAtPath, getMergedObject, getParsedPath, callNestedProperty, getNestedProperty, getDeepClone, hasNestedProperty, isEmptyPath, splice */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* WEBPACK VAR INJECTION */(function(global) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isArray", function() { return isArray; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "cloneArray", function() { return cloneArray; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "reduce", function() { return reduce; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getOwnProperties", function() { return getOwnProperties; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "assignFallback", function() { return assignFallback; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isCloneable", function() { return isCloneable; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isGlobalConstructor", function() { return isGlobalConstructor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "callIfFunction", function() { return callIfFunction; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getShallowClone", function() { return getShallowClone; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getNewEmptyChild", function() { return getNewEmptyChild; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getNewEmptyObject", function() { return getNewEmptyObject; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "cloneIfPossible", function() { return cloneIfPossible; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getNewChildClone", function() { return getNewChildClone; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getCoalescedValue", function() { return getCoalescedValue; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onMatchAtPath", function() { return onMatchAtPath; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getMergedObject", function() { return getMergedObject; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getParsedPath", function() { return getParsedPath; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "callNestedProperty", function() { return callNestedProperty; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getNestedProperty", function() { return getNestedProperty; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getDeepClone", function() { return getDeepClone; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hasNestedProperty", function() { return hasNestedProperty; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isEmptyPath", function() { return isEmptyPath; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "splice", function() { return splice; });
+/* harmony import */ var pathington__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pathington */ "./node_modules/pathington/es/index.js");
+// external dependencies
+
+var O = Object;
+var create = O.create,
+    getOwnPropertySymbols = O.getOwnPropertySymbols,
+    getPrototypeOf = O.getPrototypeOf,
+    keys = O.keys,
+    propertyIsEnumerable = O.propertyIsEnumerable;
+var toStringObject = O.prototype.toString;
+var toStringFunction = Function.prototype.toString;
+/**
+ * @constant {Symbol} REACT_ELEMENT
+ */
+// eslint-disable-next-line no-magic-numbers
+
+var REACT_ELEMENT = typeof Symbol === 'function' && typeof Symbol.for === 'function' ? Symbol.for('react.element') : 0xeac7;
+/**
+ * @constant {RegExp} FUNCTION_NAME
+ */
+
+var FUNCTION_NAME = /^\s*function\s*([^\(]*)/i;
+/**
+ * @function isArray
+ */
+
+var isArray = Array.isArray;
+/**
+ * @function cloneArray
+ *
+ * @description
+ * shallowly clone an array
+ *
+ * @param {Array<any>} array the array to clone
+ * @returns {Array<any>} the cloned array
+ */
+
+
+var cloneArray = function cloneArray(array) {
+  var cloned = new array.constructor();
+
+  for (var index = 0; index < array.length; index++) {
+    cloned[index] = array[index];
+  }
+
+  return cloned;
+};
+/**
+ * @function reduce
+ *
+ * @description
+ * a slimmer, simpler reduce than native (for performance)
+ *
+ * @param {Array<any>} array the array to reduce
+ * @param {function} fn the function to reduce each iteration of the array with
+ * @param {any} initialValue the initial value of the reduction
+ * @returns {any} the reduced array value
+ */
+
+var reduce = function reduce(array, fn, initialValue) {
+  var value = initialValue;
+
+  for (var index = 0; index < array.length; index++) {
+    value = fn(value, array[index]);
+  }
+
+  return value;
+};
+/**
+ * @function getOwnProperties
+ *
+ * @description
+ * get the own properties of an object, either keys or symbols
+ *
+ * @param {Object} object the object to get all keys and symbols of
+ * @returns {Array<string|symbol>} the own properties of the object
+ */
+
+var getOwnProperties = function getOwnProperties(object) {
+  var ownSymbols = getOwnPropertySymbols(object);
+
+  if (!ownSymbols.length) {
+    return keys(object);
+  }
+
+  return keys(object).concat(reduce(ownSymbols, function (enumerableSymbols, symbol) {
+    if (propertyIsEnumerable.call(object, symbol)) {
+      enumerableSymbols.push(symbol);
+    }
+
+    return enumerableSymbols;
+  }, []));
+};
+/**
+ * @function assignFallback
+ *
+ * @description
+ * a simple implementation of Object.assign
+ *
+ * @param {Object} target the target object
+ * @param {Object} source the object to merge into target
+ * @returns {Object} the shallowly-merged object
+ */
+
+var assignFallback = function assignFallback(target, source) {
+  if (!source) {
+    return target;
+  }
+
+  return reduce(getOwnProperties(source), function (clonedObject, property) {
+    clonedObject[property] = source[property];
+    return clonedObject;
+  }, Object(target));
+};
+var assign = typeof O.assign === 'function' ? O.assign : assignFallback;
+/**
+ * @function isCloneable
+ *
+ * @description
+ * can the object be cloned
+ * 
+ * - the object exists and is an object
+ * - the object is not a Date or RegExp
+ * - the object is not a React element
+ *
+ * @param {*} object the object to test
+ * @returns {boolean} can the object be merged
+ */
+
+var isCloneable = function isCloneable(object) {
+  if (!object || typeof object !== 'object') {
+    return false;
+  }
+
+  var type = toStringObject.call(object);
+  return type !== '[object Date]' && type !== '[object RegExp]' && object.$$typeof !== REACT_ELEMENT;
+};
+/**
+ * @function isGlobalConstructor
+ *
+ * @description
+ * is the function passed a global constructor function
+ *
+ * @param {function} fn the function to test
+ * @returns {boolean} is the function a global constructor
+ */
+
+var isGlobalConstructor = function isGlobalConstructor(fn) {
+  return typeof fn === 'function' && global[fn.name || toStringFunction.call(fn).split(FUNCTION_NAME)[1]] === fn;
+};
+/**
+ * @function callIfFunction
+ *
+ * @description
+ * call the object passed if it is a function and return its return, else return undefined
+ *
+ * @param {*} object the object to conditionally call if a function
+ * @param {*} context the context to apply to the call
+ * @param {Array<*>} parameters the parametesr to apply the function with
+ * @returns {*} the restulf of the call or undefined
+ */
+
+var callIfFunction = function callIfFunction(object, context, parameters) {
+  return typeof object === 'function' ? object.apply(context, parameters) : void 0;
+};
+/**
+ * @function getShallowClone
+ *
+ * @description
+ * get a shallow clone of the value passed based on the type requested (maintaining prototype if possible)
+ *
+ * @param {Array<*>|Object} object the object to clone
+ * @param {number|string} key the key to base the object type fromisReactElement(object) ||
+ * @returns {Array<*>|Object} a shallow clone of the value
+ */
+
+var getShallowClone = function getShallowClone(object) {
+  if (object.constructor === O) {
+    return assign({}, object);
+  }
+
+  if (isArray(object)) {
+    return cloneArray(object);
+  }
+
+  return isGlobalConstructor(object.constructor) ? {} : assign(create(getPrototypeOf(object)), object);
+};
+/**
+ * @function getNewEmptyChild
+ *
+ * @description
+ * get a new empty child for the type of key provided
+ *
+ * @param {number|string} key the key to test
+ * @returns {Array|Object} the empty child
+ */
+
+var getNewEmptyChild = function getNewEmptyChild(key) {
+  return typeof key === 'number' ? [] : {};
+};
+/**
+ * @function getNewEmptyObject
+ *
+ * @description
+ * get a new empty object for the type of key provided
+ *
+ * @param {Array|Object} object the object to get an empty value of
+ * @returns {Array|Object} the empty object
+ */
+
+var getNewEmptyObject = function getNewEmptyObject(object) {
+  return isArray(object) ? [] : {};
+};
+/**
+ * @function cloneIfPossible
+ *
+ * @description
+ * clone the object passed if it is mergeable, else return itself
+ *
+ * @param {*} object he object to clone
+ * @returns {*} the cloned object
+ */
+
+var cloneIfPossible = function cloneIfPossible(object) {
+  return isCloneable(object) ? getShallowClone(object) : object;
+};
+/**
+ * @function getNewChildClone
+ *
+ * @description
+ * get the shallow clone of the child when it is the correct type
+ *
+ * @param {Array<*>|Object} object the object to clone
+ * @param {number|string} nextKey the key that the next object will be based from
+ * @returns {Array<*>|Object} the clone of the key at object
+ */
+
+var getNewChildClone = function getNewChildClone(object, nextKey) {
+  return isCloneable(object) ? getShallowClone(object) : getNewEmptyChild(nextKey);
+};
+/**
+ * @function getCoalescedValue
+ *
+ * @description
+ * get the value if it is not undefined, else get the fallback
+ *`
+ * @param {any} value the main value to return
+ * @param {any} fallbackValue the value to return if main is undefined
+ * @returns {any} the coalesced value
+ */
+
+var getCoalescedValue = function getCoalescedValue(value, fallbackValue) {
+  return value === void 0 ? fallbackValue : value;
+};
+/**
+ * @function onMatchAtPath
+ *
+ * @description
+ * when there is a match for the path requested, call onMatch, else return the noMatchValue
+ *
+ * @param {Array<number|string>} path the path to find a match at
+ * @param {Array<*>|Object} object the object to find the path in
+ * @param {function} onMatch when a match is found, call this method
+ * @param {boolean} shouldClone should the object be cloned
+ * @param {*} noMatchValue when no match is found, return this value
+ * @param {number} [index=0] the index of the key to process
+ * @returns {*} either the return from onMatch or the noMatchValue
+ */
+
+var onMatchAtPath = function onMatchAtPath(path, object, onMatch, shouldClone, noMatchValue, index) {
+  if (index === void 0) {
+    index = 0;
+  }
+
+  var key = path[index];
+  var nextIndex = index + 1;
+
+  if (nextIndex === path.length) {
+    var result = object || shouldClone ? onMatch(object, key) : noMatchValue;
+    return shouldClone ? object : result;
+  }
+
+  if (shouldClone) {
+    object[key] = onMatchAtPath(path, getNewChildClone(object[key], path[nextIndex]), onMatch, shouldClone, noMatchValue, nextIndex);
+    return object;
+  }
+
+  return object && object[key] ? onMatchAtPath(path, object[key], onMatch, shouldClone, noMatchValue, nextIndex) : noMatchValue;
+};
+/**
+ * @function getMergedObject
+ *
+ * @description
+ * get the objects merged into a new object
+ *
+ * @param {Array<*>|Object} object1 the object to merge into
+ * @param {Array<*>|Object} object2 the object to merge
+ * @param {boolean} isDeep is the object deeply merged
+ * @returns {Array<*>|Object} the merged object
+ */
+
+var getMergedObject = function getMergedObject(object1, object2, isDeep) {
+  var isObject1Array = isArray(object1);
+
+  if (isObject1Array !== isArray(object2) || !isCloneable(object1)) {
+    return cloneIfPossible(object2);
+  }
+
+  if (isObject1Array) {
+    return object1.concat(object2);
+  }
+
+  var target = object1.constructor === O || isGlobalConstructor(object1.constructor) ? {} : create(getPrototypeOf(object1));
+  return reduce(getOwnProperties(object2), function (clone, key) {
+    clone[key] = isDeep && isCloneable(object2[key]) ? getMergedObject(object1[key], object2[key], isDeep) : object2[key];
+    return clone;
+  }, assign(target, object1));
+};
+/**
+ * @function getParsedPath
+ *
+ * @description
+ * get the path array, either as-is if already an array, or parsed by pathington
+ *
+ * @param {Array<number|string>|number|string} path the path to parse
+ * @returns {Array<number|string>} the parsed path
+ */
+
+var getParsedPath = function getParsedPath(path) {
+  return isArray(path) ? path : Object(pathington__WEBPACK_IMPORTED_MODULE_0__["parse"])(path);
+};
+/**
+ * @function callNestedProperty
+ *
+ * @description
+ * parse the path passed and call the nested method at that path
+ *
+ * @param {Array<number|string>|number|string} path the path to retrieve values from the object
+ * @param {*} context the context that the method is called with
+ * @param {Array<*>} parameters the parameters to call the method with
+ * @param {*} object the object to get values from
+ * @returns {*} the retrieved values
+ */
+
+var callNestedProperty = function callNestedProperty(path, context, parameters, object) {
+  var parsedPath = getParsedPath(path);
+
+  if (parsedPath.length === 1) {
+    return object ? callIfFunction(object[parsedPath[0]], context, parameters) : void 0;
+  }
+
+  return onMatchAtPath(parsedPath, object, function (ref, key) {
+    return callIfFunction(ref[key], context, parameters);
+  });
+};
+/**
+ * @function getNestedProperty
+ *
+ * @description
+ * parse the path passed and get the nested property at that path
+ *
+ * @param {Array<number|string>|number|string} path the path to retrieve values from the object
+ * @param {*} object the object to get values from
+ * @param {*} noMatchValue an optional fallback value to be returned when the nested property isn't found
+ * @returns {*} the retrieved values
+ */
+
+var getNestedProperty = function getNestedProperty(path, object, noMatchValue) {
+  var parsedPath = getParsedPath(path);
+
+  if (parsedPath.length === 1) {
+    return object ? getCoalescedValue(object[parsedPath[0]], noMatchValue) : noMatchValue;
+  }
+
+  return onMatchAtPath(parsedPath, object, function (ref, key) {
+    return getCoalescedValue(ref[key], noMatchValue);
+  }, false, noMatchValue);
+};
+/**
+ * @function getDeepClone
+ *
+ * @description
+ * parse the path passed and clone the object at that path
+ *
+ * @param {Array<number|string>|number|string} path the path to deeply modify the object on
+ * @param {Array<*>|Object} object the objeisCurrentKeyArrayct to modify
+ * @param {function} onMatch the callback to execute
+ * @returns {Array<*>|Object} the clone object
+ */
+
+var getDeepClone = function getDeepClone(path, object, onMatch) {
+  var parsedPath = getParsedPath(path);
+  var topLevelClone = isCloneable(object) ? getShallowClone(object) : getNewEmptyChild(parsedPath[0]);
+
+  if (parsedPath.length === 1) {
+    onMatch(topLevelClone, parsedPath[0]);
+    return topLevelClone;
+  }
+
+  return onMatchAtPath(parsedPath, topLevelClone, onMatch, true);
+};
+/**
+ * @function hasNestedProperty
+ *
+ * @description
+ * parse the path passed and determine if a value at the path exists
+ *
+ * @param {Array<number|string>|number|string} path the path to retrieve values from the object
+ * @param {*} object the object to get values from
+ * @returns {boolean} does the nested path exist
+ */
+
+var hasNestedProperty = function hasNestedProperty(path, object) {
+  return getNestedProperty(path, object) !== void 0;
+};
+/* eslint-disable eqeqeq */
+
+/**
+ * @function isEmptyPath
+ *
+ * @description
+ * is the object passed an empty key value
+ *
+ * @param {*} object the object to test
+ * @returns {boolean} is the object an empty key value
+ */
+
+var isEmptyPath = function isEmptyPath(object) {
+  return object == null || isArray(object) && !object.length;
+};
+/* eslint-enable */
+
+/**
+ * @function splice
+ *
+ * @description
+ * splice a single item from the array
+ *
+ * @param {Array<*>} array array to splice from
+ * @param {number} splicedIndex index to splice at
+ */
+
+var splice = function splice(array, splicedIndex) {
+  if (array.length) {
+    var length = array.length;
+    var index = splicedIndex;
+
+    while (index < length - 1) {
+      array[index] = array[index + 1];
+      ++index;
+    }
+
+    --array.length;
+  }
+};
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js")))
+
+/***/ }),
+
+/***/ "./node_modules/webpack/buildin/global.js":
+/*!***********************************!*\
+  !*** (webpack)/buildin/global.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || new Function("return this")();
+} catch (e) {
+	// This works if the window reference is available
+	if (typeof window === "object") g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+
 /***/ "./src/classes/ChartConfig.js":
 /*!************************************!*\
   !*** ./src/classes/ChartConfig.js ***!
   \************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-
-
-exports.__esModule = true;
-
-var _Config2 = __webpack_require__(/*! ./Config */ "./src/classes/Config.js");
-
-var _Config3 = _interopRequireDefault(_Config2);
-
-var _constants = __webpack_require__(/*! ../constants */ "./src/constants.js");
-
-var _utils = __webpack_require__(/*! ../utils */ "./src/utils.js");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Config__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Config */ "./src/classes/Config.js");
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../constants */ "./src/constants.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils */ "./src/utils.js");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } // classes
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+// classes
 
 
 // constants
@@ -429,12 +1274,12 @@ var ChartConfig = function (_Config) {
    * @returns {ChartConfig} new config class
    */
   ChartConfig.prototype.addType = function addType(type, seriesPassed) {
-    if (!isArray(seriesPassed) && !(0, _utils.isPlainObject)(seriesPassed)) {
+    if (!isArray(seriesPassed) && !Object(_utils__WEBPACK_IMPORTED_MODULE_2__["isPlainObject"])(seriesPassed)) {
       throw new TypeError('Series passed must be either a plain object or an array of plain objects.');
     }
 
     var series = isArray(seriesPassed) ? seriesPassed : [seriesPassed];
-    var config = (0, _utils.getNewConfigWithSeries)(this.config, (0, _utils.getNewChartSeries)(series, type));
+    var config = Object(_utils__WEBPACK_IMPORTED_MODULE_2__["getNewConfigWithSeries"])(this.config, Object(_utils__WEBPACK_IMPORTED_MODULE_2__["getNewChartSeries"])(series, type));
 
     return new ChartConfig(config, this.options);
   };
@@ -458,7 +1303,7 @@ var ChartConfig = function (_Config) {
       return null;
     }
 
-    return (0, _utils.isUndefined)(types) ? (0, _utils.getFirstIfOnly)(series) : (0, _utils.getSpecificSeries)(series, (0, _utils.getArrayOfItem)(types));
+    return Object(_utils__WEBPACK_IMPORTED_MODULE_2__["isUndefined"])(types) ? Object(_utils__WEBPACK_IMPORTED_MODULE_2__["getFirstIfOnly"])(series) : Object(_utils__WEBPACK_IMPORTED_MODULE_2__["getSpecificSeries"])(series, Object(_utils__WEBPACK_IMPORTED_MODULE_2__["getArrayOfItem"])(types));
   };
 
   /**
@@ -473,7 +1318,7 @@ var ChartConfig = function (_Config) {
 
 
   ChartConfig.prototype.removeType = function removeType(chartPath) {
-    if ((0, _utils.isUndefined)(chartPath)) {
+    if (Object(_utils__WEBPACK_IMPORTED_MODULE_2__["isUndefined"])(chartPath)) {
       return this.remove('series');
     }
 
@@ -485,11 +1330,11 @@ var ChartConfig = function (_Config) {
       return this;
     }
 
-    var _getPathArray = (0, _utils.getPathArray)(chartPath),
+    var _getPathArray = Object(_utils__WEBPACK_IMPORTED_MODULE_2__["getPathArray"])(chartPath),
         chart = _getPathArray[0],
         indexString = _getPathArray[1];
 
-    if ((0, _utils.isUndefined)(indexString)) {
+    if (Object(_utils__WEBPACK_IMPORTED_MODULE_2__["isUndefined"])(indexString)) {
       var series = currentSeries.filter(function (_ref) {
         var type = _ref.type;
         return type !== chart;
@@ -498,11 +1343,11 @@ var ChartConfig = function (_Config) {
       return this.set('series', series);
     }
 
-    var chartIndices = (0, _utils.getMatchingChartIndices)(currentSeries, chart);
+    var chartIndices = Object(_utils__WEBPACK_IMPORTED_MODULE_2__["getMatchingChartIndices"])(currentSeries, chart);
     var indexNumber = +indexString;
-    var indexToRemove = chartIndices[(0, _utils.isNAN)(indexNumber) ? 0 : indexNumber];
+    var indexToRemove = chartIndices[Object(_utils__WEBPACK_IMPORTED_MODULE_2__["isNAN"])(indexNumber) ? 0 : indexNumber];
 
-    return (0, _utils.isUndefined)(indexToRemove) ? this : this.remove('series[' + indexToRemove + ']');
+    return Object(_utils__WEBPACK_IMPORTED_MODULE_2__["isUndefined"])(indexToRemove) ? this : this.remove('series[' + indexToRemove + ']');
   };
 
   /**
@@ -524,41 +1369,41 @@ var ChartConfig = function (_Config) {
 
     var length = currentSeries.length;
 
-    if ((0, _utils.isUndefined)(chartPath) || !length) {
+    if (Object(_utils__WEBPACK_IMPORTED_MODULE_2__["isUndefined"])(chartPath) || !length) {
       return this;
     }
 
-    if (!(0, _utils.isPlainObject)(seriesInstance)) {
+    if (!Object(_utils__WEBPACK_IMPORTED_MODULE_2__["isPlainObject"])(seriesInstance)) {
       throw new TypeError('Series passed must be a plain object.');
     }
 
-    var _getPathArray2 = (0, _utils.getPathArray)(chartPath),
+    var _getPathArray2 = Object(_utils__WEBPACK_IMPORTED_MODULE_2__["getPathArray"])(chartPath),
         chart = _getPathArray2[0],
         indexString = _getPathArray2[1];
 
-    var chartIndices = (0, _utils.getMatchingChartIndices)(currentSeries, chart);
+    var chartIndices = Object(_utils__WEBPACK_IMPORTED_MODULE_2__["getMatchingChartIndices"])(currentSeries, chart);
     var indexNumber = +indexString;
-    var indexToUpdate = chartIndices[(0, _utils.isNAN)(indexNumber) ? 0 : indexNumber];
+    var indexToUpdate = chartIndices[Object(_utils__WEBPACK_IMPORTED_MODULE_2__["isNAN"])(indexNumber) ? 0 : indexNumber];
 
     var key = 'series[' + indexToUpdate + ']';
     var existingSeries = this.get(key);
 
-    if ((0, _utils.isUndefined)(existingSeries)) {
+    if (Object(_utils__WEBPACK_IMPORTED_MODULE_2__["isUndefined"])(existingSeries)) {
       return this;
     }
 
-    var mergedSeries = (0, _utils.assign)({}, existingSeries, seriesInstance);
-    var series = (0, _utils.getNewChartSeries)([mergedSeries], chart);
+    var mergedSeries = Object(_utils__WEBPACK_IMPORTED_MODULE_2__["assign"])({}, existingSeries, seriesInstance);
+    var series = Object(_utils__WEBPACK_IMPORTED_MODULE_2__["getNewChartSeries"])([mergedSeries], chart);
 
-    return (0, _utils.isUndefined)(indexToUpdate) ? this : this.set(key, series[0]);
+    return Object(_utils__WEBPACK_IMPORTED_MODULE_2__["isUndefined"])(indexToUpdate) ? this : this.set(key, series[0]);
   };
 
   return ChartConfig;
-}(_Config3.default);
+}(_Config__WEBPACK_IMPORTED_MODULE_0__["default"]);
 
-_constants.CHART_CONVENIENCE_METHOD_NAMES.forEach(ChartConfig.addMethod(ChartConfig));
+_constants__WEBPACK_IMPORTED_MODULE_1__["CHART_CONVENIENCE_METHOD_NAMES"].forEach(ChartConfig.addMethod(ChartConfig));
 
-exports.default = ChartConfig;
+/* harmony default export */ __webpack_exports__["default"] = (ChartConfig);
 
 /***/ }),
 
@@ -566,19 +1411,16 @@ exports.default = ChartConfig;
 /*!*******************************!*\
   !*** ./src/classes/Config.js ***!
   \*******************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var unchanged__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! unchanged */ "./node_modules/unchanged/es/index.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils */ "./src/utils.js");
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-
-exports.__esModule = true;
-
-var _unchanged = __webpack_require__(/*! unchanged */ "unchanged");
-
-var _utils = __webpack_require__(/*! ../utils */ "./src/utils.js");
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } // external dependencies
+// external dependencies
 
 
 // utils
@@ -594,6 +1436,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * @class Config
  * @classdesc configuration object builder base class
  */
+
 var Config = function () {
   /**
    * @function constructor
@@ -615,13 +1458,13 @@ var Config = function () {
     this.isValid = null;
     this.options = null;
 
-    this.config = (0, _utils.getConfig)(Config, config);
-    this.options = (0, _utils.assign)({}, options);
+    this.config = Object(_utils__WEBPACK_IMPORTED_MODULE_1__["getConfig"])(Config, config);
+    this.options = Object(_utils__WEBPACK_IMPORTED_MODULE_1__["assign"])({}, options);
 
     var validate = this.options.validate;
 
 
-    if ((0, _utils.isFunction)(validate)) {
+    if (Object(_utils__WEBPACK_IMPORTED_MODULE_1__["isFunction"])(validate)) {
       this.isValid = validate(this.config);
     }
 
@@ -659,7 +1502,7 @@ var Config = function () {
    */
   Config.addMethod = function addMethod(Constructor) {
     return function (methodName, method) {
-      var methodToAssign = (0, _utils.isFunction)(method) ? (0, _utils.createAddMethodWrapper)(Constructor, method) : (0, _utils.createPropertyConvenienceMethod)(methodName);
+      var methodToAssign = Object(_utils__WEBPACK_IMPORTED_MODULE_1__["isFunction"])(method) ? Object(_utils__WEBPACK_IMPORTED_MODULE_1__["createAddMethodWrapper"])(Constructor, method) : Object(_utils__WEBPACK_IMPORTED_MODULE_1__["createPropertyConvenienceMethod"])(methodName);
 
       Object.defineProperty(Constructor.prototype, methodName, {
         configurable: false,
@@ -698,7 +1541,7 @@ var Config = function () {
 
 
   Config.prototype.get = function get(path) {
-    return (0, _utils.isUndefined)(path) ? this.config : (0, _unchanged.get)(path, this.config);
+    return Object(_utils__WEBPACK_IMPORTED_MODULE_1__["isUndefined"])(path) ? this.config : Object(unchanged__WEBPACK_IMPORTED_MODULE_0__["get"])(path, this.config);
   };
 
   /**
@@ -721,7 +1564,7 @@ var Config = function () {
     }
 
     var config = otherConfigs.reduce(function (newConfig, config) {
-      return (0, _unchanged.merge)(null, newConfig, (0, _utils.getConfig)(Config, config));
+      return Object(unchanged__WEBPACK_IMPORTED_MODULE_0__["merge"])(null, newConfig, Object(_utils__WEBPACK_IMPORTED_MODULE_1__["getConfig"])(Config, config));
     }, this.config);
 
     return new this.constructor(config, this.options);
@@ -739,8 +1582,8 @@ var Config = function () {
 
 
   Config.prototype.remove = function remove(paths) {
-    var keys = (0, _utils.getArrayOfItem)(paths);
-    var config = (0, _utils.removeOrOmit)(keys, this.config);
+    var keys = Object(_utils__WEBPACK_IMPORTED_MODULE_1__["getArrayOfItem"])(paths);
+    var config = Object(_utils__WEBPACK_IMPORTED_MODULE_1__["removeOrOmit"])(keys, this.config);
 
     return new this.constructor(config, this.options);
   };
@@ -755,11 +1598,11 @@ var Config = function () {
 
 
   Config.prototype.set = function set(path, value) {
-    if ((0, _utils.isUndefined)(path)) {
+    if (Object(_utils__WEBPACK_IMPORTED_MODULE_1__["isUndefined"])(path)) {
       return this;
     }
 
-    var config = (0, _utils.isPlainObject)(path) ? (0, _utils.getNewConfigFromObject)(this.config, path) : (0, _unchanged.set)(path, value, this.config);
+    var config = Object(_utils__WEBPACK_IMPORTED_MODULE_1__["isPlainObject"])(path) ? Object(_utils__WEBPACK_IMPORTED_MODULE_1__["getNewConfigFromObject"])(this.config, path) : Object(unchanged__WEBPACK_IMPORTED_MODULE_0__["set"])(path, value, this.config);
 
     return new this.constructor(config, this.options);
   };
@@ -781,7 +1624,7 @@ var Config = function () {
   return Config;
 }();
 
-exports.default = Config;
+/* harmony default export */ __webpack_exports__["default"] = (Config);
 
 /***/ }),
 
@@ -789,27 +1632,20 @@ exports.default = Config;
 /*!**************************************!*\
   !*** ./src/classes/OptionsConfig.js ***!
   \**************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-
-
-exports.__esModule = true;
-
-var _Config2 = __webpack_require__(/*! ./Config */ "./src/classes/Config.js");
-
-var _Config3 = _interopRequireDefault(_Config2);
-
-var _constants = __webpack_require__(/*! ../constants */ "./src/constants.js");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Config__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Config */ "./src/classes/Config.js");
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../constants */ "./src/constants.js");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } // classes
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+// classes
 
 
 // constants
@@ -825,6 +1661,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  * @class OptionsConfig
  * @classdesc configuration object builder for global options
  */
+
 var OptionsConfig = function (_Config) {
   _inherits(OptionsConfig, _Config);
 
@@ -835,11 +1672,11 @@ var OptionsConfig = function (_Config) {
   }
 
   return OptionsConfig;
-}(_Config3.default);
+}(_Config__WEBPACK_IMPORTED_MODULE_0__["default"]);
 
-_constants.OPTIONS_CONVENIENCE_METHOD_NAMES.forEach(OptionsConfig.addMethod(OptionsConfig));
+_constants__WEBPACK_IMPORTED_MODULE_1__["OPTIONS_CONVENIENCE_METHOD_NAMES"].forEach(OptionsConfig.addMethod(OptionsConfig));
 
-exports.default = OptionsConfig;
+/* harmony default export */ __webpack_exports__["default"] = (OptionsConfig);
 
 /***/ }),
 
@@ -847,13 +1684,14 @@ exports.default = OptionsConfig;
 /*!**************************!*\
   !*** ./src/constants.js ***!
   \**************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/*! exports provided: CHART_CONVENIENCE_METHOD_NAMES, OPTIONS_CONVENIENCE_METHOD_NAMES, CHARTS_UNABLE_TO_BE_MIXED */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-
-
-exports.__esModule = true;
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CHART_CONVENIENCE_METHOD_NAMES", function() { return CHART_CONVENIENCE_METHOD_NAMES; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "OPTIONS_CONVENIENCE_METHOD_NAMES", function() { return OPTIONS_CONVENIENCE_METHOD_NAMES; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CHARTS_UNABLE_TO_BE_MIXED", function() { return CHARTS_UNABLE_TO_BE_MIXED; });
 /**
  * @module constants
  */
@@ -865,7 +1703,7 @@ exports.__esModule = true;
  * @type {Array<string>}
  * @desfault
  */
-var CHART_CONVENIENCE_METHOD_NAMES = exports.CHART_CONVENIENCE_METHOD_NAMES = ['accessibility', 'chart', 'colorAxis', 'colors', 'credits', 'data', 'defs', 'drilldown', 'exporting', 'labels', 'legend', 'loading', 'mapNavigation', 'navigation', 'noData', 'pane', 'plotOptions', 'responsive', 'series', 'subtitle', 'title', 'tooltip', 'xAxis', 'yAxis', 'zAxis'];
+var CHART_CONVENIENCE_METHOD_NAMES = ['accessibility', 'chart', 'colorAxis', 'colors', 'credits', 'data', 'defs', 'drilldown', 'exporting', 'labels', 'legend', 'loading', 'mapNavigation', 'navigation', 'noData', 'pane', 'plotOptions', 'responsive', 'series', 'subtitle', 'title', 'tooltip', 'xAxis', 'yAxis', 'zAxis'];
 
 /**
  * @private
@@ -874,7 +1712,7 @@ var CHART_CONVENIENCE_METHOD_NAMES = exports.CHART_CONVENIENCE_METHOD_NAMES = ['
  * @type {Array<string>}
  * @default
  */
-var OPTIONS_CONVENIENCE_METHOD_NAMES = exports.OPTIONS_CONVENIENCE_METHOD_NAMES = ['global', 'lang'];
+var OPTIONS_CONVENIENCE_METHOD_NAMES = ['global', 'lang'];
 
 /**
  * @private
@@ -883,7 +1721,7 @@ var OPTIONS_CONVENIENCE_METHOD_NAMES = exports.OPTIONS_CONVENIENCE_METHOD_NAMES 
  * @type {Array<string>}
  * @default
  */
-var CHARTS_UNABLE_TO_BE_MIXED = exports.CHARTS_UNABLE_TO_BE_MIXED = ['funnel', 'gauge', 'heatmap', 'pyramid', 'solidgauge', 'treemap'];
+var CHARTS_UNABLE_TO_BE_MIXED = ['funnel', 'gauge', 'heatmap', 'pyramid', 'solidgauge', 'treemap'];
 
 /***/ }),
 
@@ -891,25 +1729,20 @@ var CHARTS_UNABLE_TO_BE_MIXED = exports.CHARTS_UNABLE_TO_BE_MIXED = ['funnel', '
 /*!**********************!*\
   !*** ./src/index.js ***!
   \**********************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _classes_ChartConfig__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./classes/ChartConfig */ "./src/classes/ChartConfig.js");
+/* harmony import */ var _classes_OptionsConfig__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./classes/OptionsConfig */ "./src/classes/OptionsConfig.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils */ "./src/utils.js");
+// classes
 
 
-exports.__esModule = true;
 
-var _ChartConfig = __webpack_require__(/*! ./classes/ChartConfig */ "./src/classes/ChartConfig.js");
+// utils
 
-var _ChartConfig2 = _interopRequireDefault(_ChartConfig);
-
-var _OptionsConfig = __webpack_require__(/*! ./classes/OptionsConfig */ "./src/classes/OptionsConfig.js");
-
-var _OptionsConfig2 = _interopRequireDefault(_OptionsConfig);
-
-var _utils = __webpack_require__(/*! ./utils */ "./src/utils.js");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
  * @module buildConfig
@@ -938,7 +1771,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @param {Object} [options={}] additional options for the configuration class
  * @returns {ChartConfig} the configuration class for a given chart
  */
-var buildConfig = (0, _utils.createBuildConfig)(_ChartConfig2.default);
+var buildConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_2__["createBuildConfig"])(_classes_ChartConfig__WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 /**
  * @function buildConfig.addChartMethod
@@ -950,11 +1783,7 @@ var buildConfig = (0, _utils.createBuildConfig)(_ChartConfig2.default);
  * @param {function} method method to execute in the chain
  * @returns {function} constructor to add method to
  */
-
-
-// utils
-// classes
-buildConfig.addChartMethod = (0, _utils.createAddMethod)(_ChartConfig2.default, buildConfig);
+buildConfig.addChartMethod = Object(_utils__WEBPACK_IMPORTED_MODULE_2__["createAddMethod"])(_classes_ChartConfig__WEBPACK_IMPORTED_MODULE_0__["default"], buildConfig);
 
 /**
  * @function buildConfig.addOptionsMethod
@@ -966,7 +1795,7 @@ buildConfig.addChartMethod = (0, _utils.createAddMethod)(_ChartConfig2.default, 
  * @param {function} method method to execute in the chain
  * @returns {function} constructor to add method to
  */
-buildConfig.addOptionsMethod = (0, _utils.createAddMethod)(_OptionsConfig2.default, buildConfig);
+buildConfig.addOptionsMethod = Object(_utils__WEBPACK_IMPORTED_MODULE_2__["createAddMethod"])(_classes_OptionsConfig__WEBPACK_IMPORTED_MODULE_1__["default"], buildConfig);
 
 /**
  * @function buildConfig.chart
@@ -991,7 +1820,7 @@ buildConfig.addOptionsMethod = (0, _utils.createAddMethod)(_OptionsConfig2.defau
  * @param {Object} [options={}] additional options for the configuration class
  * @returns {ChartConfig} the configuration class for a given chart
  */
-buildConfig.chart = (0, _utils.createBuildConfig)(_ChartConfig2.default);
+buildConfig.chart = Object(_utils__WEBPACK_IMPORTED_MODULE_2__["createBuildConfig"])(_classes_ChartConfig__WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 /**
  * @function buildConfig.options
@@ -1003,9 +1832,9 @@ buildConfig.chart = (0, _utils.createBuildConfig)(_ChartConfig2.default);
  * @param {Object} [options={}] additional options for the configuration class
  * @returns {OptionsConfig} the configuration class for options
  */
-buildConfig.options = (0, _utils.createBuildConfig)(_OptionsConfig2.default);
+buildConfig.options = Object(_utils__WEBPACK_IMPORTED_MODULE_2__["createBuildConfig"])(_classes_OptionsConfig__WEBPACK_IMPORTED_MODULE_1__["default"]);
 
-exports.default = buildConfig;
+/* harmony default export */ __webpack_exports__["default"] = (buildConfig);
 
 /***/ }),
 
@@ -1013,26 +1842,46 @@ exports.default = buildConfig;
 /*!**********************!*\
   !*** ./src/utils.js ***!
   \**********************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/*! exports provided: isFunction, isNAN, isPlainObject, isUndefined, assignFallback, assign, createAddMethod, createAddMethodWrapper, createBuildConfig, getArrayOfItem, getPathArray, getConfig, getDefaultSeries, getNamespacedKey, canCombineChartTypes, createPropertyConvenienceMethod, isMixedChartType, getFirstIfOnly, getMatchingChartIndices, getNewChartSeries, getNewConfigFromObject, getNewConfigWithSeries, getSpecificSeries, removeOrOmit */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-
-
-exports.__esModule = true;
-exports.removeOrOmit = exports.getSpecificSeries = exports.getNewConfigWithSeries = exports.getNewConfigFromObject = exports.getNewChartSeries = exports.getMatchingChartIndices = exports.getFirstIfOnly = exports.isMixedChartType = exports.createPropertyConvenienceMethod = exports.canCombineChartTypes = exports.getNamespacedKey = exports.getDefaultSeries = exports.getConfig = exports.getPathArray = exports.getArrayOfItem = exports.createBuildConfig = exports.createAddMethodWrapper = exports.createAddMethod = exports.assign = exports.assignFallback = exports.isUndefined = exports.isPlainObject = exports.isNAN = exports.isFunction = undefined;
-
-var _pathington = __webpack_require__(/*! pathington */ "./node_modules/pathington/es/index.js");
-
-var _unchanged = __webpack_require__(/*! unchanged */ "unchanged");
-
-var _constants = __webpack_require__(/*! ./constants */ "./src/constants.js");
-
-var isArray = Array.isArray;
-
-// constants
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isFunction", function() { return isFunction; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isNAN", function() { return isNAN; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isPlainObject", function() { return isPlainObject; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isUndefined", function() { return isUndefined; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "assignFallback", function() { return assignFallback; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "assign", function() { return assign; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createAddMethod", function() { return createAddMethod; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createAddMethodWrapper", function() { return createAddMethodWrapper; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createBuildConfig", function() { return createBuildConfig; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getArrayOfItem", function() { return getArrayOfItem; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPathArray", function() { return getPathArray; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getConfig", function() { return getConfig; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getDefaultSeries", function() { return getDefaultSeries; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getNamespacedKey", function() { return getNamespacedKey; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "canCombineChartTypes", function() { return canCombineChartTypes; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createPropertyConvenienceMethod", function() { return createPropertyConvenienceMethod; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isMixedChartType", function() { return isMixedChartType; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getFirstIfOnly", function() { return getFirstIfOnly; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getMatchingChartIndices", function() { return getMatchingChartIndices; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getNewChartSeries", function() { return getNewChartSeries; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getNewConfigFromObject", function() { return getNewConfigFromObject; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getNewConfigWithSeries", function() { return getNewConfigWithSeries; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getSpecificSeries", function() { return getSpecificSeries; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "removeOrOmit", function() { return removeOrOmit; });
+/* harmony import */ var pathington__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pathington */ "./node_modules/pathington/es/index.js");
+/* harmony import */ var unchanged__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! unchanged */ "./node_modules/unchanged/es/index.js");
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./constants */ "./src/constants.js");
 // external dependencies
 
+
+
+// constants
+
+
+var isArray = Array.isArray;
 var getOwnPropertySymbols = Object.getOwnPropertySymbols,
     keys = Object.keys;
 var hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -1049,7 +1898,7 @@ var hasOwnProperty = Object.prototype.hasOwnProperty;
  * @returns {boolean} is the object a function
  */
 
-var isFunction = exports.isFunction = function isFunction(object) {
+var isFunction = function isFunction(object) {
   return typeof object === 'function';
 };
 
@@ -1064,7 +1913,7 @@ var isFunction = exports.isFunction = function isFunction(object) {
  * @param {*} object the object to test
  * @returns {boolean} is the object a NaN
  */
-var isNAN = exports.isNAN = function isNAN(object) {
+var isNAN = function isNAN(object) {
   return object !== object;
 };
 
@@ -1079,7 +1928,7 @@ var isNAN = exports.isNAN = function isNAN(object) {
  * @param {*} object the object to test
  * @returns {boolean} is the object a plain object
  */
-var isPlainObject = exports.isPlainObject = function isPlainObject(object) {
+var isPlainObject = function isPlainObject(object) {
   return !!object && object.constructor === Object;
 };
 
@@ -1094,7 +1943,7 @@ var isPlainObject = exports.isPlainObject = function isPlainObject(object) {
  * @param {*} object the object to test
  * @returns {boolean} is the object undefined
  */
-var isUndefined = exports.isUndefined = function isUndefined(object) {
+var isUndefined = function isUndefined(object) {
   return object === void 0;
 };
 
@@ -1108,7 +1957,7 @@ var isUndefined = exports.isUndefined = function isUndefined(object) {
  * @param  {...Object} sources the sources to assign to the target
  * @returns {Object} the assigned object
  */
-var assignFallback = exports.assignFallback = function assignFallback(target) {
+var assignFallback = function assignFallback(target) {
   for (var _len = arguments.length, sources = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
     sources[_key - 1] = arguments[_key];
   }
@@ -1138,7 +1987,7 @@ var assignFallback = exports.assignFallback = function assignFallback(target) {
   }, target);
 };
 
-var assign = exports.assign = typeof Object.assign === 'function' ? Object.assign : assignFallback;
+var assign = typeof Object.assign === 'function' ? Object.assign : assignFallback;
 
 /**
  * @module utils
@@ -1157,7 +2006,7 @@ var assign = exports.assign = typeof Object.assign === 'function' ? Object.assig
  * @param {function} buildConfig main function, returned to allow chainability
  * @returns {function(string, function): function} add method to Constructor
  */
-var createAddMethod = exports.createAddMethod = function createAddMethod(Constructor, buildConfig) {
+var createAddMethod = function createAddMethod(Constructor, buildConfig) {
   return function (methodName, method) {
     if (typeof method === 'function') {
       Constructor.addMethod(Constructor)(methodName, method);
@@ -1181,7 +2030,7 @@ var createAddMethod = exports.createAddMethod = function createAddMethod(Constru
  * @param {function} method method to execute in chain
  * @returns {function(): (ChartConfig|OptionsConfig)} new configuration class
  */
-var createAddMethodWrapper = exports.createAddMethodWrapper = function createAddMethodWrapper(Constructor, method) {
+var createAddMethodWrapper = function createAddMethodWrapper(Constructor, method) {
   return function () {
     var result = method.call(this, this.config, this);
     var config = isPlainObject(result) ? result : this.config;
@@ -1201,7 +2050,7 @@ var createAddMethodWrapper = exports.createAddMethodWrapper = function createAdd
  * @param {function} Constructor constructor to call with config and options
  * @returns {function(Object, Object): (ChartConfig|OptionsConfig)}
  */
-var createBuildConfig = exports.createBuildConfig = function createBuildConfig(Constructor) {
+var createBuildConfig = function createBuildConfig(Constructor) {
   return function () {
     var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -1220,7 +2069,7 @@ var createBuildConfig = exports.createBuildConfig = function createBuildConfig(C
  * @param {*} item item to return in array form
  * @returns {Array<*>} array form of item
  */
-var getArrayOfItem = exports.getArrayOfItem = function getArrayOfItem(item) {
+var getArrayOfItem = function getArrayOfItem(item) {
   return isArray(item) ? item : [item];
 };
 
@@ -1235,8 +2084,8 @@ var getArrayOfItem = exports.getArrayOfItem = function getArrayOfItem(item) {
  * @param {Array<number|string>|string} path path to get array form of
  * @returns {Array<number|string>} array form of path
  */
-var getPathArray = exports.getPathArray = function getPathArray(path) {
-  return isArray(path) ? path : (0, _pathington.parse)(path);
+var getPathArray = function getPathArray(path) {
+  return isArray(path) ? path : Object(pathington__WEBPACK_IMPORTED_MODULE_0__["parse"])(path);
 };
 
 /**
@@ -1251,7 +2100,7 @@ var getPathArray = exports.getPathArray = function getPathArray(path) {
  * @param {Config|Object} config the object to test
  * @returns {Object} the config object
  */
-var getConfig = exports.getConfig = function getConfig(Config, config) {
+var getConfig = function getConfig(Config, config) {
   return config instanceof Config ? config.get() : config;
 };
 
@@ -1266,8 +2115,8 @@ var getConfig = exports.getConfig = function getConfig(Config, config) {
  * @param {Object} config config to retrieve series from
  * @returns {Array<Object>} series for the given config
  */
-var getDefaultSeries = exports.getDefaultSeries = function getDefaultSeries(config) {
-  return (0, _unchanged.getOr)([], ['series'], config);
+var getDefaultSeries = function getDefaultSeries(config) {
+  return Object(unchanged__WEBPACK_IMPORTED_MODULE_1__["getOr"])([], ['series'], config);
 };
 
 /**
@@ -1282,7 +2131,7 @@ var getDefaultSeries = exports.getDefaultSeries = function getDefaultSeries(conf
  * @param {string} namespace namespace of key
  * @returns {string} complete key
  */
-var getNamespacedKey = exports.getNamespacedKey = function getNamespacedKey(key, namespace) {
+var getNamespacedKey = function getNamespacedKey(key, namespace) {
   return namespace + '.' + key;
 };
 
@@ -1297,10 +2146,10 @@ var getNamespacedKey = exports.getNamespacedKey = function getNamespacedKey(key,
  * @param {Array<Object>} series series data sets
  * @returns {boolean} does the series allow for combination of all the charts added
  */
-var canCombineChartTypes = exports.canCombineChartTypes = function canCombineChartTypes(series) {
+var canCombineChartTypes = function canCombineChartTypes(series) {
   return series.every(function (_ref) {
     var type = _ref.type;
-    return !~_constants.CHARTS_UNABLE_TO_BE_MIXED.indexOf(type);
+    return !~_constants__WEBPACK_IMPORTED_MODULE_2__["CHARTS_UNABLE_TO_BE_MIXED"].indexOf(type);
   });
 };
 
@@ -1315,7 +2164,7 @@ var canCombineChartTypes = exports.canCombineChartTypes = function canCombineCha
  * @param {string} property property name
  * @returns {Function} method to assign to class at property
  */
-var createPropertyConvenienceMethod = exports.createPropertyConvenienceMethod = function createPropertyConvenienceMethod(property) {
+var createPropertyConvenienceMethod = function createPropertyConvenienceMethod(property) {
   return function (subKey, value) {
     var length = arguments.length;
 
@@ -1354,7 +2203,7 @@ var createPropertyConvenienceMethod = exports.createPropertyConvenienceMethod = 
  * @param {Array<Object>} series series data sets
  * @returns {boolean} are multiple chart types present
  */
-var isMixedChartType = exports.isMixedChartType = function isMixedChartType(series) {
+var isMixedChartType = function isMixedChartType(series) {
   if (!series.length) {
     return false;
   }
@@ -1367,7 +2216,7 @@ var isMixedChartType = exports.isMixedChartType = function isMixedChartType(seri
   });
 };
 
-var getFirstIfOnly = exports.getFirstIfOnly = function getFirstIfOnly(items) {
+var getFirstIfOnly = function getFirstIfOnly(items) {
   return items.length === 1 ? items[0] : items;
 };
 
@@ -1383,7 +2232,7 @@ var getFirstIfOnly = exports.getFirstIfOnly = function getFirstIfOnly(items) {
  * @param {string} chart the chart to match indices of
  * @returns {Array<T>}
  */
-var getMatchingChartIndices = exports.getMatchingChartIndices = function getMatchingChartIndices(series, chart) {
+var getMatchingChartIndices = function getMatchingChartIndices(series, chart) {
   return series.reduce(function (indices, _ref3, seriesIndex) {
     var type = _ref3.type;
 
@@ -1407,7 +2256,7 @@ var getMatchingChartIndices = exports.getMatchingChartIndices = function getMatc
  * @param {string} type the type of chart
  * @returns {Array<Object>} series augmented with chart type
  */
-var getNewChartSeries = exports.getNewChartSeries = function getNewChartSeries(series, type) {
+var getNewChartSeries = function getNewChartSeries(series, type) {
   return series.map(function (seriesInstance) {
     return seriesInstance.type ? seriesInstance : assign({}, seriesInstance, { type: type });
   });
@@ -1425,9 +2274,9 @@ var getNewChartSeries = exports.getNewChartSeries = function getNewChartSeries(s
  * @param {Object} object key => value pairs to assign to the config
  * @returns {Object} new configuration object
  */
-var getNewConfigFromObject = exports.getNewConfigFromObject = function getNewConfigFromObject(currentConfig, object) {
+var getNewConfigFromObject = function getNewConfigFromObject(currentConfig, object) {
   return keys(object).reduce(function (config, key) {
-    return (0, _unchanged.set)(key, object[key], config);
+    return Object(unchanged__WEBPACK_IMPORTED_MODULE_1__["set"])(key, object[key], config);
   }, currentConfig);
 };
 
@@ -1443,14 +2292,14 @@ var getNewConfigFromObject = exports.getNewConfigFromObject = function getNewCon
  * @param {Array<Object>} series series data sets
  * @returns {Object} new configuration object
  */
-var getNewConfigWithSeries = exports.getNewConfigWithSeries = function getNewConfigWithSeries(config, series) {
+var getNewConfigWithSeries = function getNewConfigWithSeries(config, series) {
   var updatedSeries = getDefaultSeries(config).concat(series);
 
   if (isMixedChartType(updatedSeries) && !canCombineChartTypes(updatedSeries)) {
     throw new TypeError('Cannot combine these chart types.');
   }
 
-  return (0, _unchanged.set)(['series'], updatedSeries, config);
+  return Object(unchanged__WEBPACK_IMPORTED_MODULE_1__["set"])(['series'], updatedSeries, config);
 };
 
 /**
@@ -1465,7 +2314,7 @@ var getNewConfigWithSeries = exports.getNewConfigWithSeries = function getNewCon
  * @param {Array<string> }types types of series to filter by
  * @returns {Array<Object>|Object} matching series
  */
-var getSpecificSeries = exports.getSpecificSeries = function getSpecificSeries(series, types) {
+var getSpecificSeries = function getSpecificSeries(series, types) {
   var chart = void 0,
       indexOfChart = void 0,
       matches = void 0,
@@ -1511,9 +2360,9 @@ var getSpecificSeries = exports.getSpecificSeries = function getSpecificSeries(s
  * @param {Object} object object to remove values at paths from
  * @returns {Object} object with values at paths removed
  */
-var removeOrOmit = exports.removeOrOmit = function removeOrOmit(paths, object) {
+var removeOrOmit = function removeOrOmit(paths, object) {
   return paths.reduce(function (updatedObject, path) {
-    return (0, _unchanged.remove)(path, updatedObject);
+    return Object(unchanged__WEBPACK_IMPORTED_MODULE_1__["remove"])(path, updatedObject);
   }, object);
 };
 
@@ -1528,17 +2377,6 @@ var removeOrOmit = exports.removeOrOmit = function removeOrOmit(paths, object) {
 
 module.exports = __webpack_require__(/*! /home/tquetano/git/highcharts-config/src/index.js */"./src/index.js");
 
-
-/***/ }),
-
-/***/ "unchanged":
-/*!****************************!*\
-  !*** external "unchanged" ***!
-  \****************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE_unchanged__;
 
 /***/ })
 
