@@ -1,20 +1,106 @@
 // external dependencies
-import get from 'lodash/fp/get';
-import isArray from 'lodash/fp/isArray';
-import isFunction from 'lodash/fp/isFunction';
-import isNAN from 'lodash/isNaN';
-import isPlainObject from 'lodash/fp/isPlainObject';
-import isUndefined from 'lodash/isUndefined';
-import omit from 'lodash/fp/omit';
-import set from 'lodash/fp/set';
-import toPath from 'lodash/fp/toPath';
+import {parse} from 'pathington';
+import {
+  getOr,
+  remove,
+  set,
+} from 'unchanged';
 
 // constants
-import {
-  CHARTS_UNABLE_TO_BE_MIXED
-} from './constants';
+import {CHARTS_UNABLE_TO_BE_MIXED} from './constants';
 
-const keys = Object.keys;
+const {isArray} = Array;
+const {getOwnPropertySymbols, keys} = Object;
+const {hasOwnProperty} = Object.prototype;
+
+/**
+ * @private
+ *
+ * @function isFunction
+ *
+ * @description
+ * is the object passed a function
+ *
+ * @param {*} object the object to test
+ * @returns {boolean} is the object a function
+ */
+export const isFunction = (object) => typeof object === 'function';
+
+/**
+ * @private
+ *
+ * @function isNAN
+ *
+ * @description
+ * is the object passed a NaN
+ *
+ * @param {*} object the object to test
+ * @returns {boolean} is the object a NaN
+ */
+export const isNAN = (object) => object !== object;
+
+/**
+ * @private
+ *
+ * @function isPlainObject
+ *
+ * @description
+ * is the object passed a plain object
+ *
+ * @param {*} object the object to test
+ * @returns {boolean} is the object a plain object
+ */
+export const isPlainObject = (object) => !!object && object.constructor === Object;
+
+/**
+ * @private
+ *
+ * @function isUndefined
+ *
+ * @description
+ * is the object passed undefined
+ *
+ * @param {*} object the object to test
+ * @returns {boolean} is the object undefined
+ */
+export const isUndefined = (object) => object === void 0;
+
+/**
+ * @function assignFallback
+ *
+ * @description
+ * the fallback for when Object.assign() is unavailable
+ *
+ * @param {Object} target the target to assign to
+ * @param  {...Object} sources the sources to assign to the target
+ * @returns {Object} the assigned object
+ */
+export const assignFallback = (target, ...sources) =>
+  sources.reduce((assigned, source) => {
+    if (!isPlainObject(source) && !isUndefined(source)) {
+      return assigned;
+    }
+
+    for (let key in source) {
+      if (hasOwnProperty.call(source, key)) {
+        assigned[key] = source[key];
+      }
+    }
+
+    if (typeof getOwnPropertySymbols !== 'function') {
+      return assigned;
+    }
+
+    const symbols = getOwnPropertySymbols(source);
+
+    return symbols.reduce((assignedWithSymbols, symbol) => {
+      assignedWithSymbols[symbol] = source[symbol];
+
+      return assignedWithSymbols;
+    }, assigned);
+  }, target);
+
+export const assign = typeof Object.assign === 'function' ? Object.assign : assignFallback;
 
 /**
  * @module utils
@@ -27,21 +113,20 @@ const keys = Object.keys;
  *
  * @description
  * create an add method function for specific constructor
+ *
  * @param {function} Constructor constructor to assign method to
  * @param {function} Constructor.addMethod static method to add method to Constructor
  * @param {function} buildConfig main function, returned to allow chainability
  * @returns {function(string, function): function} add method to Constructor
  */
-export const createAddMethod = (Constructor, buildConfig) => {
-  return (methodName, method) => {
-    if (!isFunction(method)) {
-      throw new TypeError('The second parameter needs to be a function.');
-    }
-
+export const createAddMethod = (Constructor, buildConfig) => (methodName, method) => {
+  if (typeof method === 'function') {
     Constructor.addMethod(Constructor)(methodName, method);
 
     return buildConfig;
-  };
+  }
+
+  throw new TypeError('The second parameter needs to be a function.');
 };
 
 /**
@@ -76,11 +161,7 @@ export const createAddMethodWrapper = function(Constructor, method) {
  * @param {function} Constructor constructor to call with config and options
  * @returns {function(Object, Object): (ChartConfig|OptionsConfig)}
  */
-export const createBuildConfig = (Constructor) => {
-  return (config = {}, options = {}) => {
-    return new Constructor(config, options);
-  };
-};
+export const createBuildConfig = (Constructor) => (config = {}, options = {}) => new Constructor(config, options);
 
 /**
  * @private
@@ -93,9 +174,7 @@ export const createBuildConfig = (Constructor) => {
  * @param {*} item item to return in array form
  * @returns {Array<*>} array form of item
  */
-export const getArrayOfItem = (item) => {
-  return isArray(item) ? item : [item];
-};
+export const getArrayOfItem = (item) => (isArray(item) ? item : [item]);
 
 /**
  * @private
@@ -108,9 +187,7 @@ export const getArrayOfItem = (item) => {
  * @param {Array<number|string>|string} path path to get array form of
  * @returns {Array<number|string>} array form of path
  */
-export const getPathArray = (path) => {
-  return isArray(path) ? path : toPath(path);
-};
+export const getPathArray = (path) => (isArray(path) ? path : parse(path));
 
 /**
  * @private
@@ -124,40 +201,34 @@ export const getPathArray = (path) => {
  * @param {Config|Object} config the object to test
  * @returns {Object} the config object
  */
-export const getConfig = (Config, config) => {
-  return config instanceof Config ? config.get() : config;
-};
+export const getConfig = (Config, config) => (config instanceof Config ? config.get() : config);
 
 /**
  * @private
  *
  * @function getDefaultSeries
- * 
+ *
  * @description
  * get the series in the config or an empty array
- * 
+ *
  * @param {Object} config config to retrieve series from
  * @returns {Array<Object>} series for the given config
  */
-export const getDefaultSeries = (config) => {
-  return get('series', config) || [];
-};
+export const getDefaultSeries = (config) => getOr([], ['series'], config);
 
 /**
  * @private
  *
  * @function getKeyWithProperty
- * 
+ *
  * @description
  * get the key namespaced
- * 
+ *
  * @param {string} key key to namespace
  * @param {string} namespace namespace of key
  * @returns {string} complete key
  */
-export const getNamespacedKey = (key, namespace) => {
-  return `${namespace}.${key}`;
-};
+export const getNamespacedKey = (key, namespace) => `${namespace}.${key}`;
 
 /**
  * @private
@@ -170,11 +241,7 @@ export const getNamespacedKey = (key, namespace) => {
  * @param {Array<Object>} series series data sets
  * @returns {boolean} does the series allow for combination of all the charts added
  */
-export const canCombineChartTypes = (series) => {
-  return series.every(({type}) => {
-    return !~CHARTS_UNABLE_TO_BE_MIXED.indexOf(type);
-  });
-};
+export const canCombineChartTypes = (series) => series.every(({type}) => !~CHARTS_UNABLE_TO_BE_MIXED.indexOf(type));
 
 /**
  * @private
@@ -187,16 +254,13 @@ export const canCombineChartTypes = (series) => {
  * @param {string} property property name
  * @returns {Function} method to assign to class at property
  */
-export const createPropertyConvenienceMethod = (property) => {
-  return function(...args) {
-    if (!args.length) {
+export const createPropertyConvenienceMethod = (property) =>
+  function(subKey, value) {
+    const length = arguments.length;
+
+    if (!length) {
       return this.get(property);
     }
-
-    const [
-      subKey,
-      value
-    ] = args;
 
     if (isPlainObject(subKey)) {
       const cleanArgs = keys(subKey).reduce((updatedObject, keyWithoutProperty) => {
@@ -214,9 +278,8 @@ export const createPropertyConvenienceMethod = (property) => {
 
     const key = getNamespacedKey(subKey, property);
 
-    return args.length === 1 ? this.get(key) : this.set(key, value);
+    return length === 1 ? this.get(key) : this.set(key, value);
   };
-};
 
 /**
  * @private
@@ -234,20 +297,12 @@ export const isMixedChartType = (series) => {
     return false;
   }
 
-  const [
-    firstItem,
-    ...restOfSeries
-  ] = series;
-  const originalType = firstItem.type;
+  const originalType = series[0].type;
 
-  return restOfSeries.some(({type}) => {
-    return type !== originalType;
-  });
+  return series.slice(1).some(({type}) => type !== originalType);
 };
 
-export const getFirstIfOnly = (items) => {
-  return items.length === 1 ? items[0] : items;
-};
+export const getFirstIfOnly = (items) => (items.length === 1 ? items[0] : items);
 
 /**
  * @private
@@ -261,14 +316,14 @@ export const getFirstIfOnly = (items) => {
  * @param {string} chart the chart to match indices of
  * @returns {Array<T>}
  */
-export const getMatchingChartIndices = (series, chart) => {
-  return series.reduce((indices, {type}, seriesIndex) => {
-    return type !== chart ? indices : [
-      ...indices,
-      seriesIndex
-    ];
+export const getMatchingChartIndices = (series, chart) =>
+  series.reduce((indices, {type}, seriesIndex) => {
+    if (type === chart) {
+      indices.push(seriesIndex);
+    }
+
+    return indices;
   }, []);
-};
 
 /**
  * @private
@@ -282,14 +337,8 @@ export const getMatchingChartIndices = (series, chart) => {
  * @param {string} type the type of chart
  * @returns {Array<Object>} series augmented with chart type
  */
-export const getNewChartSeries = (series, type) => {
-  return series.map((seriesInstance) => {
-    return seriesInstance.type ? seriesInstance : {
-      ...seriesInstance,
-      type
-    };
-  });
-};
+export const getNewChartSeries = (series, type) =>
+  series.map((seriesInstance) => (seriesInstance.type ? seriesInstance : assign({}, seriesInstance, {type})));
 
 /**
  * @private
@@ -303,11 +352,8 @@ export const getNewChartSeries = (series, type) => {
  * @param {Object} object key => value pairs to assign to the config
  * @returns {Object} new configuration object
  */
-export const getNewConfigFromObject = (currentConfig, object) => {
-  return keys(object).reduce((config, key) => {
-    return set(key, object[key], config);
-  }, currentConfig);
-};
+export const getNewConfigFromObject = (currentConfig, object) =>
+  keys(object).reduce((config, key) => set(key, object[key], config), currentConfig);
 
 /**
  * @private
@@ -322,16 +368,13 @@ export const getNewConfigFromObject = (currentConfig, object) => {
  * @returns {Object} new configuration object
  */
 export const getNewConfigWithSeries = (config, series) => {
-  const updatedSeries = [
-    ...getDefaultSeries(config),
-    ...series
-  ];
+  const updatedSeries = getDefaultSeries(config).concat(series);
 
   if (isMixedChartType(updatedSeries) && !canCombineChartTypes(updatedSeries)) {
     throw new TypeError('Cannot combine these chart types.');
   }
 
-  return set('series', updatedSeries, config);
+  return set(['series'], updatedSeries, config);
 };
 
 /**
@@ -350,28 +393,21 @@ export const getSpecificSeries = (series, types) => {
   let chart, indexOfChart, matches, match;
 
   const specificSeries = types.reduce((matchingSeries, type) => {
-    ([
-      chart,
-      indexOfChart
-    ] = getPathArray(type));
+    [chart, indexOfChart] = getPathArray(type);
 
-    matches = series.filter(({type: seriesType}) => {
-      return seriesType === chart;
-    });
+    matches = series.filter(({type: seriesType}) => seriesType === chart);
 
     if (isUndefined(indexOfChart)) {
-      return [
-        ...matchingSeries,
-        ...matches
-      ];
+      return matchingSeries.concat(matches);
     }
 
     match = matches[+indexOfChart];
 
-    return isUndefined(match) ? matchingSeries : [
-      ...matchingSeries,
-      match
-    ];
+    if (!isUndefined(match)) {
+      matchingSeries.push(match);
+    }
+
+    return matchingSeries;
   }, []);
 
   return getFirstIfOnly(specificSeries);
@@ -389,24 +425,5 @@ export const getSpecificSeries = (series, types) => {
  * @param {Object} object object to remove values at paths from
  * @returns {Object} object with values at paths removed
  */
-export const removeOrOmit = (paths, object) => {
-  let pathArray, finalIndex, initialPath, parent, value, indexToMatch;
-
-  return paths.reduce((updatedObject, path) => {
-    pathArray = getPathArray(path);
-    finalIndex = pathArray.length - 1;
-    initialPath = pathArray.slice(0, finalIndex);
-    parent = get(initialPath, updatedObject);
-
-    if (isArray(parent)) {
-      indexToMatch = +pathArray[finalIndex];
-      value = isNAN(indexToMatch) ? parent : parent.filter((value, index) => {
-        return index !== indexToMatch;
-      });
-
-      return set(initialPath, value, updatedObject);
-    }
-
-    return omit([path], updatedObject);
-  }, object);
-};
+export const removeOrOmit = (paths, object) =>
+  paths.reduce((updatedObject, path) => remove(path, updatedObject), object);

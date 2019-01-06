@@ -2,9 +2,7 @@
 import Config from './Config';
 
 // constants
-import {
-  OPTIONS_CONVENIENCE_METHOD_NAMES
-} from '../constants';
+import {OPTIONS_CONVENIENCE_METHOD_NAMES} from '../constants';
 
 /**
  * @module classes/OptionsConfig

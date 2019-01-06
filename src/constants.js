@@ -34,7 +34,7 @@ export const CHART_CONVENIENCE_METHOD_NAMES = [
   'tooltip',
   'xAxis',
   'yAxis',
-  'zAxis'
+  'zAxis',
 ];
 
 /**
@@ -44,10 +44,7 @@ export const CHART_CONVENIENCE_METHOD_NAMES = [
  * @type {Array<string>}
  * @default
  */
-export const OPTIONS_CONVENIENCE_METHOD_NAMES = [
-  'global',
-  'lang'
-];
+export const OPTIONS_CONVENIENCE_METHOD_NAMES = ['global', 'lang'];
 
 /**
  * @private
@@ -56,11 +53,4 @@ export const OPTIONS_CONVENIENCE_METHOD_NAMES = [
  * @type {Array<string>}
  * @default
  */
-export const CHARTS_UNABLE_TO_BE_MIXED = [
-  'funnel',
-  'gauge',
-  'heatmap',
-  'pyramid',
-  'solidgauge',
-  'treemap'
-];
+export const CHARTS_UNABLE_TO_BE_MIXED = ['funnel', 'gauge', 'heatmap', 'pyramid', 'solidgauge', 'treemap'];

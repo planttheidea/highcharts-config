@@ -23,27 +23,20 @@ test('if ChartConfig is extension of Config', (t) => {
 
 test('if prototype for OptionsConfig are the properties from CHART_CONVENIENCE_METHOD_NAMES', (t) => {
   const optionsPrototype = Object.getOwnPropertyNames(ChartConfig.prototype)
-    .filter((method) => {
-      return method !== 'constructor';
-    })
+    .filter((method) => method !== 'constructor')
     .sort();
 
-  const expectedResult = [
-    ...constants.CHART_CONVENIENCE_METHOD_NAMES,
-    ...ADDED_PROTOTYPE_METHODS
-  ].sort();
+  const expectedResult = [...constants.CHART_CONVENIENCE_METHOD_NAMES, ...ADDED_PROTOTYPE_METHODS].sort();
 
   t.deepEqual(optionsPrototype, expectedResult);
 });
 
 test('if addType will call getNewConfigWithSeries and assign its return to a new instance', (t) => {
   const newConfig = {
-    foo: 'bar'
+    foo: 'bar',
   };
 
-  const stub = sinon.stub(utils, 'getNewConfigWithSeries', () => {
-    return newConfig;
-  });
+  const stub = sinon.stub(utils, 'getNewConfigWithSeries').callsFake(() => newConfig);
 
   const instance = new ChartConfig();
 
@@ -58,17 +51,15 @@ test('if addType will call getNewConfigWithSeries and assign its return to a new
 
 test('if addType will coalesce a plain object to an array of that object', (t) => {
   const newConfig = {
-    foo: 'bar'
+    foo: 'bar',
   };
   const seriesInstance = {};
   const series = [seriesInstance];
 
   const instance = new ChartConfig();
 
-  const configStub = sinon.stub(utils, 'getNewConfigWithSeries', () => {
-    return newConfig;
-  });
-  const plainObjectStub = sinon.stub(utils, 'getNewChartSeries', (seriesPassed) => {
+  const configStub = sinon.stub(utils, 'getNewConfigWithSeries').callsFake(() => newConfig);
+  const plainObjectStub = sinon.stub(utils, 'getNewChartSeries').callsFake((seriesPassed) => {
     t.true(_.isArray(seriesPassed));
     t.is(seriesPassed.length, 1);
     t.is(seriesPassed[0], seriesInstance);
@@ -80,7 +71,7 @@ test('if addType will coalesce a plain object to an array of that object', (t) =
 
   plainObjectStub.restore();
 
-  const arrayStub = sinon.stub(utils, 'getNewChartSeries', (seriesPassed) => {
+  const arrayStub = sinon.stub(utils, 'getNewChartSeries').callsFake((seriesPassed) => {
     t.is(seriesPassed, series);
 
     return seriesPassed;
@@ -110,7 +101,7 @@ test('if getType of a config with no series returns null', (t) => {
 
 test('if getType of a config with an empty series returns null', (t) => {
   const instance = new ChartConfig({
-    series: []
+    series: [],
   });
 
   const result = instance.getType('spline');
@@ -121,7 +112,7 @@ test('if getType of a config with an empty series returns null', (t) => {
 test('if getType without any parameters gets all series types', (t) => {
   const series = ['foo', 'bar'];
   const instance = new ChartConfig({
-    series
+    series,
   });
 
   const result = instance.getType();
@@ -131,19 +122,13 @@ test('if getType without any parameters gets all series types', (t) => {
 
 test('if getType with standard type gets the series available for that type', (t) => {
   const type = 'spline';
-  const series = [
-    {type},
-    {type: 'bar'},
-    {type}
-  ];
+  const series = [{type}, {type: 'bar'}, {type}];
   const instance = new ChartConfig({
-    series
+    series,
   });
 
   const result = instance.getType(type);
-  const expectedResult = series.filter(({type: seriesType}) => {
-    return type === seriesType;
-  });
+  const expectedResult = series.filter(({type: seriesType}) => type === seriesType);
 
   t.deepEqual(result, expectedResult);
 });
@@ -151,13 +136,9 @@ test('if getType with standard type gets the series available for that type', (t
 test('if getType with type and index as string gets the series available for that type', (t) => {
   const type = 'spline';
   const index = 0;
-  const series = [
-    {type},
-    {type: 'bar'},
-    {type}
-  ];
+  const series = [{type}, {type: 'bar'}, {type}];
   const instance = new ChartConfig({
-    series
+    series,
   });
 
   const result = instance.getType(`${type}[${index}]`);
@@ -168,29 +149,20 @@ test('if getType with type and index as string gets the series available for tha
 test('if getType with multiple types gets the series available for those types', (t) => {
   const type = 'spline';
   const type2 = 'bar';
-  const series = [
-    {type},
-    {type: type2},
-    {type},
-    {type: 'column'}
-  ];
+  const series = [{type}, {type: type2}, {type}, {type: 'column'}];
   const instance = new ChartConfig({
-    series
+    series,
   });
 
   const result = instance.getType([type, type2]);
-  const expectedResult = [
-    {type},
-    {type},
-    {type: type2}
-  ];
+  const expectedResult = [{type}, {type}, {type: type2}];
 
   t.deepEqual(result, expectedResult);
 });
 
 test('if removeType will remove all series values if no argument is passed', (t) => {
   const config = {
-    series: ['foo', 'bar', 'baz']
+    series: ['foo', 'bar', 'baz'],
   };
 
   const instance = new ChartConfig(config);
@@ -204,7 +176,7 @@ test('if removeType will remove all series values if no argument is passed', (t)
 
 test('if removeType will return the instance if no entries currently exist', (t) => {
   const config = {
-    series: []
+    series: [],
   };
 
   const instance = new ChartConfig(config);
@@ -218,11 +190,7 @@ test('if removeType will remove all instances of a specific type of that type wh
   const foo = 'foo';
   const bar = 'bar';
   const config = {
-    series: [
-      {type: foo},
-      {type: bar},
-      {type: foo}
-    ]
+    series: [{type: foo}, {type: bar}, {type: foo}],
   };
 
   const instance = new ChartConfig(config);
@@ -230,9 +198,7 @@ test('if removeType will remove all instances of a specific type of that type wh
   const result = instance.removeType(foo);
 
   const expectedResult = {
-    series: [
-      config.series[1]
-    ]
+    series: [config.series[1]],
   };
 
   t.deepEqual(result.config, expectedResult);
@@ -242,11 +208,7 @@ test('if removeType will remove a single instance of a specific type of that typ
   const foo = 'foo';
   const bar = 'bar';
   const config = {
-    series: [
-      {type: foo},
-      {type: bar},
-      {type: foo}
-    ]
+    series: [{type: foo}, {type: bar}, {type: foo}],
   };
 
   const instance = new ChartConfig(config);
@@ -254,10 +216,7 @@ test('if removeType will remove a single instance of a specific type of that typ
   const result = instance.removeType(`${foo}[0]`);
 
   const expectedResult = {
-    series: [
-      config.series[1],
-      config.series[2]
-    ]
+    series: [config.series[1], config.series[2]],
   };
 
   t.deepEqual(result.config, expectedResult);
@@ -274,7 +233,7 @@ test('if updateType will return the instance if the series is empty', (t) => {
 
 test('if updateType will return the instance if the chartPath is empty', (t) => {
   const instance = new ChartConfig({
-    series: ['foo']
+    series: ['foo'],
   });
 
   const result = instance.updateType();
@@ -284,7 +243,7 @@ test('if updateType will return the instance if the chartPath is empty', (t) => 
 
 test('if updateType will throw if the series instance is not an object', (t) => {
   const instance = new ChartConfig({
-    series: ['foo']
+    series: ['foo'],
   });
 
   t.throws(() => {
@@ -293,11 +252,9 @@ test('if updateType will throw if the series instance is not an object', (t) => 
 });
 
 test('if updateType will return the instance if the index to update is larger than the available options to update', (t) => {
-  const type = 'spline'
+  const type = 'spline';
   const instance = new ChartConfig({
-    series: [
-      {type}
-    ]
+    series: [{type}],
   });
 
   const result = instance.updateType(`${type}[1]`, {});
@@ -311,18 +268,18 @@ test('if updateType will update the type matched', (t) => {
     series: [
       {
         data: ['foo'],
-        type
-      }
-    ]
+        type,
+      },
+    ],
   });
   const updatedSeries = {
-    data: ['bar']
+    data: ['bar'],
   };
 
   const result = instance.updateType(`${type}[0]`, updatedSeries);
   const expectedResult = {
     ...updatedSeries,
-    type
+    type,
   };
 
   t.deepEqual(result.config.series[0], expectedResult);
@@ -334,27 +291,24 @@ test('if updateType will update the first instance of the type matched when no i
     series: [
       {
         data: ['foo'],
-        type
-      }, {
+        type,
+      },
+      {
         data: ['baz'],
-        type
-      }
-    ]
+        type,
+      },
+    ],
   });
   const updatedSeries = {
-    data: ['bar']
+    data: ['bar'],
   };
 
   const result = instance.updateType(type, updatedSeries);
   const expectedResult = {
     ...updatedSeries,
-    type
+    type,
   };
 
   t.deepEqual(result.config.series[0], expectedResult);
-  t.deepEqual(result.config.series, [
-    expectedResult,
-    instance.config.series[1]
-  ]);
+  t.deepEqual(result.config.series, [expectedResult, instance.config.series[1]]);
 });
-
