@@ -5,7 +5,7 @@ import OptionsConfig from './classes/OptionsConfig';
 // utils
 import {
   createAddMethod,
-  createBuildConfig
+  createBuildConfig,
 } from './utils';
 
 /**

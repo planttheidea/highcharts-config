@@ -1,31 +1,29 @@
-// external dependencies
-import isArray from 'lodash/fp/isArray';
-import isNAN from 'lodash/fp/isNaN';
-import isPlainObject from 'lodash/fp/isPlainObject';
-import isUndefined from 'lodash/fp/isUndefined';
-
 // classes
 import Config from './Config';
 
 // constants
-import {
-  CHART_CONVENIENCE_METHOD_NAMES
-} from '../constants';
+import {CHART_CONVENIENCE_METHOD_NAMES} from '../constants';
 
 // utils
 import {
+  assign,
   getArrayOfItem,
   getFirstIfOnly,
   getMatchingChartIndices,
   getNewChartSeries,
   getNewConfigWithSeries,
   getPathArray,
-  getSpecificSeries
+  getSpecificSeries,
+  isNAN,
+  isPlainObject,
+  isUndefined,
 } from '../utils';
 
 /**
  * @module classes/ChartConfig
  */
+
+const {isArray} = Array;
 
 /**
  * @private
@@ -45,16 +43,11 @@ class ChartConfig extends Config {
    * @returns {ChartConfig} new config class
    */
   addType(type, seriesPassed) {
-    let series;
-
-    if (isArray(seriesPassed)) {
-      series = seriesPassed;
-    } else if (isPlainObject(seriesPassed)) {
-      series = [seriesPassed];
-    } else {
+    if (!isArray(seriesPassed) && !isPlainObject(seriesPassed)) {
       throw new TypeError('Series passed must be either a plain object or an array of plain objects.');
     }
 
+    const series = isArray(seriesPassed) ? seriesPassed : [seriesPassed];
     const config = getNewConfigWithSeries(this.config, getNewChartSeries(series, type));
 
     return new ChartConfig(config, this.options);
@@ -77,11 +70,7 @@ class ChartConfig extends Config {
       return null;
     }
 
-    if (isUndefined(types)) {
-      return getFirstIfOnly(series);
-    }
-
-    return getSpecificSeries(series, getArrayOfItem(types));
+    return isUndefined(types) ? getFirstIfOnly(series) : getSpecificSeries(series, getArrayOfItem(types));
   }
 
   /**
@@ -98,23 +87,16 @@ class ChartConfig extends Config {
       return this.remove('series');
     }
 
-    const {
-      series: currentSeries = []
-    } = this.config;
+    const {series: currentSeries = []} = this.config;
 
     if (!currentSeries.length) {
       return this;
     }
 
-    const [
-      chart,
-      indexString
-    ] = getPathArray(chartPath);
+    const [chart, indexString] = getPathArray(chartPath);
 
     if (isUndefined(indexString)) {
-      const series = currentSeries.filter(({type}) => {
-        return type !== chart;
-      });
+      const series = currentSeries.filter(({type}) => type !== chart);
 
       return this.set('series', series);
     }
@@ -137,9 +119,7 @@ class ChartConfig extends Config {
    * @returns {ChartConfig} new config class
    */
   updateType(chartPath, seriesInstance) {
-    const {
-      series: currentSeries = []
-    } = this.config;
+    const {series: currentSeries = []} = this.config;
 
     const length = currentSeries.length;
 
@@ -151,13 +131,10 @@ class ChartConfig extends Config {
       throw new TypeError('Series passed must be a plain object.');
     }
 
-    const [
-      chart,
-      indexString
-    ] = getPathArray(chartPath);
+    const [chart, indexString] = getPathArray(chartPath);
 
-    const indexNumber = +indexString;
     const chartIndices = getMatchingChartIndices(currentSeries, chart);
+    const indexNumber = +indexString;
     const indexToUpdate = chartIndices[isNAN(indexNumber) ? 0 : indexNumber];
 
     const key = `series[${indexToUpdate}]`;
@@ -167,10 +144,7 @@ class ChartConfig extends Config {
       return this;
     }
 
-    const mergedSeries = {
-      ...existingSeries,
-      ...seriesInstance
-    };
+    const mergedSeries = assign({}, existingSeries, seriesInstance);
     const series = getNewChartSeries([mergedSeries], chart);
 
     return isUndefined(indexToUpdate) ? this : this.set(key, series[0]);

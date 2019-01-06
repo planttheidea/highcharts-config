@@ -6,13 +6,96 @@ import _ from 'lodash';
 import * as utils from '../src/utils';
 import * as constants from '../src/constants';
 
+function Foo(value) {
+  this.value = value;
+
+  return this;
+}
+
+const objects = [
+  ['array', []],
+  ['boolean', true],
+  ['custom object', new Foo('bar')],
+  ['date', new Date()],
+  ['error', new Error()],
+  ['function', function() {}],
+  ['map', new Map()],
+  ['nan', NaN],
+  ['null', null],
+  ['number', 123],
+  ['plain object', {}],
+  ['promise', new Promise(() => {})],
+  ['set', new Set()],
+  ['symbol', Symbol('foo')],
+  ['undefined', undefined],
+];
+
+test('if assignFallback will work the same as Object.assign() with only keys', (t) => {
+  const target = {};
+  const source1 = {foo: 'bar'};
+  const source2 = {bar: 'baz'};
+
+  const result = utils.assign(target, source1, source2);
+
+  t.is(result, target);
+  t.deepEqual(result, Object.assign({...target}, source1, source2));
+});
+
+test('if assignFallback will work the same as Object.assign() with keys and symbols', (t) => {
+  const target = {};
+  const source1 = {foo: 'bar'};
+  const source2 = {bar: 'baz'};
+
+  const symbol = Symbol('baz');
+
+  const source3 = {[symbol]: 'quz'};
+
+  const result = utils.assign(target, source1, source2, source3);
+
+  t.is(result, target);
+  t.deepEqual(result, Object.assign({...target}, source1, source2, source3));
+});
+
+test('if isFunction returns true if function, false otherwise', (t) => {
+  objects.forEach((o) => {
+    const [type, object] = o;
+    const comparator = type === 'function';
+
+    t[comparator](utils.isFunction(object));
+  });
+});
+
+test('if isNAN returns true if NaN, false otherwise', (t) => {
+  objects.forEach((o) => {
+    const [type, object] = o;
+    const comparator = type === 'nan';
+
+    t[comparator](utils.isNAN(object));
+  });
+});
+
+test('if isPlainObject returns true if a plain object, false otherwise', (t) => {
+  objects.forEach((o) => {
+    const [type, object] = o;
+    const comparator = type === 'plain object';
+
+    t[comparator](utils.isPlainObject(object));
+  });
+});
+
+test('if isUndefined returns true if undefined, false otherwise', (t) => {
+  objects.forEach((o) => {
+    const [type, object] = o;
+    const comparator = type === 'undefined';
+
+    t[comparator](utils.isUndefined(object));
+  });
+});
+
 test('if canCombineChartTypes returns true if series has all types that are not part of CHARTS_UNABLE_TO_BE_MIXED', (t) => {
   const type1 = 'foo';
   const type2 = 'bar';
-  const series = [
-    {type: type1},
-    {type: type2}
-  ];
+  const series = [{type: type1}, {type: type2}];
 
   const result = utils.canCombineChartTypes(series);
 
@@ -28,10 +111,7 @@ test('if createAddMethod will return a function that will call the addMethod met
       t.is(Constructor, Foo);
 
       return (...args) => {
-        t.deepEqual(args, [
-          methodName,
-          method
-        ]);
+        t.deepEqual(args, [methodName, method]);
       };
     }
   }
@@ -81,10 +161,7 @@ test('if createAddMethodWrapper returns a function calls the method passed with 
   const instance = new Foo(config, options);
 
   const method = (...args) => {
-    t.deepEqual(args, [
-      config,
-      instance
-    ]);
+    t.deepEqual(args, [config, instance]);
   };
 
   let fn = utils.createAddMethodWrapper(Foo, method);
@@ -113,9 +190,7 @@ test('if createAddMethodWrapper returns a function that returns a new instance w
   const instance = new Foo(config, options);
   const newConfig = {};
 
-  const method = () => {
-    return newConfig;
-  };
+  const method = () => newConfig;
 
   const fn = utils.createAddMethodWrapper(Foo, method).bind(instance);
 
@@ -125,34 +200,35 @@ test('if createAddMethodWrapper returns a function that returns a new instance w
   t.is(result.config, newConfig);
 });
 
-test('if createAddMethodWrapper returns a function that returns a new instance with the original config ' +
-  'from method when return from method is not a plain object', (t) => {
-  const config = {};
-  const options = {};
+test(
+  'if createAddMethodWrapper returns a function that returns a new instance with the original config ' +
+    'from method when return from method is not a plain object',
+  (t) => {
+    const config = {};
+    const options = {};
 
-  class Foo {
-    constructor(configPassed, optionsPassed) {
-      this.config = configPassed;
-      this.options = optionsPassed;
+    class Foo {
+      constructor(configPassed, optionsPassed) {
+        this.config = configPassed;
+        this.options = optionsPassed;
+      }
+
+      config = null;
+      options = null;
     }
 
-    config = null;
-    options = null;
+    const instance = new Foo(config, options);
+
+    const method = () => 'foo';
+
+    const fn = utils.createAddMethodWrapper(Foo, method).bind(instance);
+
+    const result = fn();
+
+    t.true(result instanceof Foo);
+    t.is(result.config, config);
   }
-
-  const instance = new Foo(config, options);
-
-  const method = () => {
-    return 'foo';
-  };
-
-  const fn = utils.createAddMethodWrapper(Foo, method).bind(instance);
-
-  const result = fn();
-
-  t.true(result instanceof Foo);
-  t.is(result.config, config);
-});
+);
 
 test('if createBuildConfig returns a function that will call new constructor with arguments passed it', (t) => {
   const config = {};
@@ -160,10 +236,7 @@ test('if createBuildConfig returns a function that will call new constructor wit
 
   class Foo {
     constructor(...args) {
-      t.deepEqual(args, [
-        config,
-        options
-      ]);
+      t.deepEqual(args, [config, options]);
     }
   }
 
@@ -179,7 +252,6 @@ test('if getConfig returns original object when config is not an instance of the
   const bar = {};
 
   const result = utils.getConfig(Foo, bar);
-
 
   t.is(result, bar);
 });
@@ -214,7 +286,7 @@ test('if getDefaultSeries returns an empty array when series property does not e
 test('if getDefaultSeries returns the series property when it exists', (t) => {
   const series = [];
   const foo = {
-    series
+    series,
   };
 
   const result = utils.getDefaultSeries(foo);
@@ -234,10 +306,7 @@ test('if getNamespacedKey concatenates key and namespace via dot separation', (t
 test('if canCombineChartTypes returns true if series has any types that are part of CHARTS_UNABLE_TO_BE_MIXED', (t) => {
   const type1 = 'foo';
   const type2 = constants.CHARTS_UNABLE_TO_BE_MIXED[0];
-  const series = [
-    {type: type1},
-    {type: type2}
-  ];
+  const series = [{type: type1}, {type: type2}];
 
   const result = utils.canCombineChartTypes(series);
 
@@ -337,14 +406,14 @@ test('if createPropertyConvenienceMethod will return a function that will call s
 test('if createPropertyConvenienceMethod will return a function that will call set with the single object argument passed as value and property as key', (t) => {
   const property = 'foo';
   const value = {
-    bar: 'bar'
+    bar: 'bar',
   };
 
   class Foo {
     set(...args) {
       t.is(args.length, 1);
       t.deepEqual(args[0], {
-        [utils.getNamespacedKey('bar', property)]: value.bar
+        [utils.getNamespacedKey('bar', property)]: value.bar,
       });
     }
   }
@@ -368,14 +437,7 @@ test('if isMixedChartType returns false when array is empty', (t) => {
 
 test('if isMixedChartType returns false when array has series of all the same type', (t) => {
   const type = 'foo';
-  const series = [
-    {type},
-    {type},
-    {type},
-    {type},
-    {type},
-    {type}
-  ];
+  const series = [{type}, {type}, {type}, {type}, {type}, {type}];
   const result = utils.isMixedChartType(series);
 
   t.false(result);
@@ -383,14 +445,7 @@ test('if isMixedChartType returns false when array has series of all the same ty
 
 test('if isMixedChartType returns true when array has series with different types', (t) => {
   const type = 'foo';
-  const series = [
-    {type},
-    {type},
-    {type},
-    {type},
-    {type: 'bar'},
-    {type}
-  ];
+  const series = [{type}, {type}, {type}, {type}, {type: 'bar'}, {type}];
   const result = utils.isMixedChartType(series);
 
   t.true(result);
@@ -399,48 +454,32 @@ test('if isMixedChartType returns true when array has series with different type
 test('if getMatchingChartIndices returns an array of indices where the chart type matches in series', (t) => {
   const matchingType = 'foo';
   const otherType = 'bar';
-  const series = [
-    {type: matchingType},
-    {type: otherType},
-    {type: matchingType}
-  ];
+  const series = [{type: matchingType}, {type: otherType}, {type: matchingType}];
 
   const result = utils.getMatchingChartIndices(series, matchingType);
 
   const expectedResult = series
-    .map(({type}, index) => {
-      return {
-        index,
-        type
-      };
-    })
-    .filter(({type}) => {
-      return type === matchingType;
-    })
-    .map(({index}) => {
-      return index;
-    });
+    .map(({type}, index) => ({
+      index,
+      type,
+    }))
+    .filter(({type}) => type === matchingType)
+    .map(({index}) => index);
 
   t.deepEqual(result, expectedResult);
 });
 
 test('if getNewChartSeries iterates over series adding type', (t) => {
   const foo = 'foo';
-  const series = [
-    {foo},
-    {foo},
-    {foo}
-  ];
+  const series = [{foo}, {foo}, {foo}];
   const type = 'bar';
 
   const result = utils.getNewChartSeries(series, type);
 
-  const expectedResult = series.map(({foo}) => {
-    return {
-      foo,
-      type
-    };
-  });
+  const expectedResult = series.map(({foo}) => ({
+    foo,
+    type,
+  }));
 
   t.deepEqual(result, expectedResult);
 });
@@ -451,14 +490,14 @@ test('if getNewConfigFromObject will return a new object with the values deeply 
   const baz = 'baz';
 
   const currentObject = {
-    foo
+    foo,
   };
   const newObject = {
-    foo: bar,
     bar,
     baz: {
-      fooBar: baz
-    }
+      fooBar: baz,
+    },
+    foo: bar,
   };
 
   const result = utils.getNewConfigFromObject(currentObject, newObject);
@@ -471,58 +510,39 @@ test('if getNewConfigFromObject will return a new object with the values deeply 
 
 test('if getNewConfigWithSeries will add a new series', (t) => {
   const type = 'foo';
-  const series = [
-    {type},
-    {type},
-    {type},
-    {type}
-  ];
+  const series = [{type}, {type}, {type}, {type}];
   const config = {};
 
   const result = utils.getNewConfigWithSeries(config, series);
 
   t.deepEqual(result, {
-    series
+    series,
   });
 });
 
 test('if getNewConfigWithSeries will add a new series to the existing one', (t) => {
-  const existingSeries = [
-    {type: 'bar'}
-  ];
+  const existingSeries = [{type: 'bar'}];
 
   const type = 'foo';
-  const series = [
-    {type},
-    {type},
-    {type},
-    {type}
-  ];
+  const series = [{type}, {type}, {type}, {type}];
   const config = {
-    series: existingSeries
+    series: existingSeries,
   };
 
   const result = utils.getNewConfigWithSeries(config, series);
 
   t.deepEqual(result, {
-    series: [
-      ...existingSeries,
-      ...series
-    ]
+    series: [...existingSeries, ...series],
   });
 });
 
 test('if getNewConfigWithSeries will throw when there is a mixed series type that matches ones that cannot be mixed', (t) => {
-  const existingSeries = [
-    {type: constants.CHARTS_UNABLE_TO_BE_MIXED[0]}
-  ];
+  const existingSeries = [{type: constants.CHARTS_UNABLE_TO_BE_MIXED[0]}];
 
   const type = 'foo';
-  const series = [
-    {type}
-  ];
+  const series = [{type}];
   const config = {
-    series: existingSeries
+    series: existingSeries,
   };
 
   t.throws(() => {
@@ -534,71 +554,61 @@ test('if removeOrOmit will remove a property from the object passed', (t) => {
   const paths = ['foo.bar.baz', 'bar.baz.foo'];
 
   const foo = {
-    barBaz: 'foo'
+    barBaz: 'foo',
   };
   const baz = {
-    fooBar: 'baz'
+    fooBar: 'baz',
   };
   const object = {
-    foo: {
-      bar: {
-        baz
-      }
-    },
     bar: {
       baz: {
-        foo
-      }
-    }
+        foo,
+      },
+    },
+    foo: {
+      bar: {
+        baz,
+      },
+    },
   };
 
   const result = utils.removeOrOmit(paths, object);
 
   t.not(result, object);
   t.deepEqual(result, {
-    foo: {
-      bar: {}
-    },
     bar: {
-      baz: {}
-    }
+      baz: {},
+    },
+    foo: {
+      bar: {},
+    },
   });
 });
 
 test('if removeOrOmit will remove an index from the object passed', (t) => {
   const paths = ['foo.bar[0]', 'bar.baz[0]'];
 
-  const bar = [
-    'foo',
-    'bar'
-  ];
-  const baz = [
-    'baz',
-    'foo'
-  ];
+  const bar = ['foo', 'bar'];
+  const baz = ['baz', 'foo'];
   const object = {
-    foo: {
-      bar
-    },
     bar: {
-      baz
-    }
+      baz,
+    },
+    foo: {
+      bar,
+    },
   };
 
   const result = utils.removeOrOmit(paths, object);
 
   t.not(result, object);
   t.deepEqual(result, {
-    foo: {
-      bar: [
-        'bar'
-      ]
-    },
     bar: {
-      baz: [
-        'foo'
-      ]
-    }
+      baz: ['foo'],
+    },
+    foo: {
+      bar: ['bar'],
+    },
   });
 });
 
@@ -631,10 +641,7 @@ test('if getPathArray will return the path array if not already an array', (t) =
   const path = 'foo.bar';
   const result = utils.getPathArray(path);
 
-  t.deepEqual(result, [
-    'foo',
-    'bar'
-  ]);
+  t.deepEqual(result, ['foo', 'bar']);
 });
 
 test('if getPathArray will return the original array if already an array', (t) => {
@@ -659,18 +666,10 @@ test('if getSpecificSeries finds the correct series based on types passed', (t) 
   const type1 = 'spline';
   const type2 = 'bar';
   const types = [type1, type2];
-  const series = [
-    {type: type1},
-    {type: 'line'},
-    {type: type1},
-    {type: type2},
-    {type: type2}
-  ];
+  const series = [{type: type1}, {type: 'line'}, {type: type1}, {type: type2}, {type: type2}];
 
   const result = utils.getSpecificSeries(series, types);
-  const expectedResult = series.filter(({type}) => {
-    return type === type1 || type === type2;
-  });
+  const expectedResult = series.filter(({type}) => type === type1 || type === type2);
 
   t.deepEqual(result, expectedResult);
 });
@@ -679,12 +678,7 @@ test('if getSpecificSeries finds the correct series based on types and indices p
   const type1 = 'spline';
   const type2 = 'bar';
   const types = [`${type1}[0]`, `${type2}[1]`];
-  const series = [
-    {type: type1},
-    {type: 'line'},
-    {type: type1},
-    {type: type2}
-  ];
+  const series = [{type: type1}, {type: 'line'}, {type: type1}, {type: type2}];
 
   const result = utils.getSpecificSeries(series, types);
 

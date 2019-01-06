@@ -19,10 +19,10 @@ test('if Config called by itself creates an empty config and options object', (t
 
 test('if Config will assign the config passed and a shallow clone of the options passed', (t) => {
   const config = {
-    foo: 'foo'
+    foo: 'foo',
   };
   const options = {
-    bar: 'bar'
+    bar: 'bar',
   };
 
   const result = new Config(config, options);
@@ -35,12 +35,12 @@ test('if Config will assign the config passed and a shallow clone of the options
 
 test('if Config will call the validate fn when passed in options, and assign its return to isValid', (t) => {
   const config = {
-    foo: 'foo'
+    foo: 'foo',
   };
   const options = {
     validate() {
       return true;
-    }
+    },
   };
 
   const spy = sinon.spy(options, 'validate');
@@ -72,12 +72,12 @@ test('if clear will create a new Config with an empty config object while passin
   const config = {
     foo: {
       bar: {
-        baz: 'fooBarBaz'
-      }
-    }
+        baz: 'fooBarBaz',
+      },
+    },
   };
   const options = {
-    foo: 'foo'
+    foo: 'foo',
   };
 
   const instance = new Config(config, options);
@@ -93,7 +93,7 @@ test('if clear will create a new Config with an empty config object while passin
 
 test('if get will return the config when no arguments are passed', (t) => {
   const config = {
-    foo: 'bar'
+    foo: 'bar',
   };
 
   const instance = new Config(config);
@@ -107,9 +107,9 @@ test('if get will return the property requested from the config whe passed', (t)
   const config = {
     foo: {
       bar: {
-        baz
-      }
-    }
+        baz,
+      },
+    },
   };
 
   const instance = new Config(config);
@@ -129,17 +129,17 @@ test('if merge merges two configs', (t) => {
   const config1 = {
     foo: {
       bar: {
-        baz: 'foo'
-      }
-    }
+        baz: 'foo',
+      },
+    },
   };
   const config2 = {
-    foo: {
-      baz: 'baz'
-    },
     bar: {
-      baz: 'foo'
-    }
+      baz: 'foo',
+    },
+    foo: {
+      baz: 'baz',
+    },
   };
 
   const instance = new Config(config1);
@@ -147,15 +147,15 @@ test('if merge merges two configs', (t) => {
   const result = instance.merge(config2);
 
   const expectedResult = {
+    bar: {
+      baz: 'foo',
+    },
     foo: {
       bar: {
-        baz: 'foo'
+        baz: 'foo',
       },
-      baz: 'baz'
+      baz: 'baz',
     },
-    bar: {
-      baz: 'foo'
-    }
   };
 
   t.deepEqual(result.config, expectedResult);
@@ -165,20 +165,20 @@ test('if merge merges more than two configs', (t) => {
   const config1 = {
     foo: {
       bar: {
-        baz: 'foo'
-      }
-    }
+        baz: 'foo',
+      },
+    },
   };
   const config2 = {
-    foo: {
-      baz: 'baz'
-    },
     bar: {
-      baz: 'foo'
-    }
+      baz: 'foo',
+    },
+    foo: {
+      baz: 'baz',
+    },
   };
   const config3 = {
-    baz: 'foo'
+    baz: 'foo',
   };
 
   const instance = new Config(config1);
@@ -186,16 +186,16 @@ test('if merge merges more than two configs', (t) => {
   const result = instance.merge(config2, config3);
 
   const expectedResult = {
+    bar: {
+      baz: 'foo',
+    },
+    baz: 'foo',
     foo: {
       bar: {
-        baz: 'foo'
+        baz: 'foo',
       },
-      baz: 'baz'
+      baz: 'baz',
     },
-    bar: {
-      baz: 'foo'
-    },
-    baz: 'foo'
   };
 
   t.deepEqual(result.config, expectedResult);
@@ -206,7 +206,7 @@ test('if remove calls removeOrOmit and assigns return to new config', (t) => {
   const config = {};
   const newConfig = {};
 
-  const stub = sinon.stub(utils, 'removeOrOmit', (keys, passedConfig) => {
+  const stub = sinon.stub(utils, 'removeOrOmit').callsFake((keys, passedConfig) => {
     t.deepEqual(keys, [path]);
     t.is(config, passedConfig);
 
@@ -229,7 +229,7 @@ test('if remove coalesces string path to array', (t) => {
 
   const instance = new Config();
 
-  const coalesceStub = sinon.stub(utils, 'removeOrOmit', (keys) => {
+  const coalesceStub = sinon.stub(utils, 'removeOrOmit').callsFake((keys) => {
     t.deepEqual(keys, paths);
 
     return {};
@@ -239,7 +239,7 @@ test('if remove coalesces string path to array', (t) => {
 
   coalesceStub.restore();
 
-  const equalStub = sinon.stub(utils, 'removeOrOmit', (keys) => {
+  const equalStub = sinon.stub(utils, 'removeOrOmit').callsFake((keys) => {
     t.is(keys, paths);
 
     return {};
@@ -269,21 +269,21 @@ test('if set assigns nested value and returns new config', (t) => {
   t.deepEqual(result.config, {
     foo: {
       bar: {
-        baz: value
-      }
-    }
+        baz: value,
+      },
+    },
   });
 });
 
 test('if set calls getNewConfigFromObject when path is a plain object and assigns its return to new config', (t) => {
   const path = {
-    foo: 'baz'
+    foo: 'baz',
   };
   const config = {
-    foo: 'bar'
+    foo: 'bar',
   };
 
-  const stub = sinon.stub(utils, 'getNewConfigFromObject', (passedConfig, passedPath) => {
+  const stub = sinon.stub(utils, 'getNewConfigFromObject').callsFake((passedConfig, passedPath) => {
     t.is(passedConfig, config);
     t.is(passedPath, path);
 
@@ -302,9 +302,9 @@ test('if toString will stringify the config with proper formatting', (t) => {
   const config = {
     foo: {
       bar: {
-        baz: 'fooBarBaz'
-      }
-    }
+        baz: 'fooBarBaz',
+      },
+    },
   };
 
   const instance = new Config(config);
@@ -313,4 +313,3 @@ test('if toString will stringify the config with proper formatting', (t) => {
 
   t.is(result, JSON.stringify(config, null, 2));
 });
-

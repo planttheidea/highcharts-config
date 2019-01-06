@@ -1,19 +1,22 @@
 // external dependencies
-import get from 'lodash/fp/get';
-import isFunction from 'lodash/fp/isFunction';
-import isPlainObject from 'lodash/fp/isPlainObject';
-import isUndefined from 'lodash/fp/isUndefined';
-import merge from 'lodash/fp/merge';
-import set from 'lodash/fp/set';
+import {
+  get,
+  merge,
+  set,
+} from 'unchanged';
 
 // utils
 import {
+  assign,
   createAddMethodWrapper,
   createPropertyConvenienceMethod,
   getArrayOfItem,
   getConfig,
   getNewConfigFromObject,
-  removeOrOmit
+  isFunction,
+  isPlainObject,
+  isUndefined,
+  removeOrOmit,
 } from '../utils';
 
 /**
@@ -39,11 +42,9 @@ class Config {
    */
   constructor(config = {}, options = {}) {
     this.config = getConfig(Config, config);
-    this.options = {...options};
+    this.options = assign({}, options);
 
-    const {
-      validate
-    } = this.options;
+    const {validate} = this.options;
 
     if (isFunction(validate)) {
       this.isValid = validate(this.config);
@@ -83,15 +84,15 @@ class Config {
    */
   static addMethod(Constructor) {
     return (methodName, method) => {
-      const methodToAssign = isFunction(method) ?
-        createAddMethodWrapper(Constructor, method) :
-        createPropertyConvenienceMethod(methodName);
+      const methodToAssign = isFunction(method)
+        ? createAddMethodWrapper(Constructor, method)
+        : createPropertyConvenienceMethod(methodName);
 
       Object.defineProperty(Constructor.prototype, methodName, {
         configurable: false,
         enumerable: false,
         value: methodToAssign,
-        writable: true
+        writable: true,
       });
 
       return Constructor;
@@ -136,9 +137,10 @@ class Config {
       return this;
     }
 
-    const config = otherConfigs.reduce((newConfig, config) => {
-      return merge(newConfig, getConfig(Config, config));
-    }, this.config);
+    const config = otherConfigs.reduce(
+      (newConfig, config) => merge(null, newConfig, getConfig(Config, config)),
+      this.config
+    );
 
     return new this.constructor(config, this.options);
   }
@@ -154,7 +156,6 @@ class Config {
    */
   remove(paths) {
     const keys = getArrayOfItem(paths);
-
     const config = removeOrOmit(keys, this.config);
 
     return new this.constructor(config, this.options);

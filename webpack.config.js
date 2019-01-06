@@ -1,45 +1,37 @@
 const path = require('path');
 const webpack = require('webpack');
 const eslintFriendlyFormatter = require('eslint-friendly-formatter');
-const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 
 module.exports = {
-  cache: false,
-
   devtool: '#source-map',
 
-  entry: [
-    path.resolve(__dirname, 'src', 'index.js')
-  ],
+  entry: [path.resolve(__dirname, 'src', 'index.js')],
 
-  eslint: {
-    configFile: '.eslintrc',
-    emitError: true,
-    failOnError: true,
-    failOnWarning: true,
-    formatter: eslintFriendlyFormatter
-  },
+  externals: ['unchanged'],
+
+  mode: 'development',
 
   module: {
-    preLoaders: [
+    rules: [
       {
-        include: [
-          path.resolve(__dirname, 'src')
-        ],
-        loader: 'eslint',
-        test: /\.js$/
-      }
+        enforce: 'pre',
+        include: [path.resolve(__dirname, 'src')],
+        loader: 'eslint-loader',
+        options: {
+          configFile: '.eslintrc',
+          emitError: true,
+          failOnError: true,
+          failOnWarning: false,
+          formatter: eslintFriendlyFormatter,
+        },
+        test: /\.js$/,
+      },
+      {
+        include: [path.resolve(__dirname, 'src'), path.resolve(__dirname, 'DEV_ONLY')],
+        loader: 'babel-loader',
+        test: /\.js$/,
+      },
     ],
-
-    loaders: [
-      {
-        include: [
-          path.resolve(__dirname, 'src')
-        ],
-        loader: 'babel',
-        test: /\.js$/
-      }
-    ]
   },
 
   output: {
@@ -47,31 +39,8 @@ module.exports = {
     library: 'buildConfig',
     libraryTarget: 'umd',
     path: path.resolve(__dirname, 'dist'),
-    umdNamedDefine: true
+    umdNamedDefine: true,
   },
 
-  plugins: [
-    new webpack.EnvironmentPlugin([
-      'NODE_ENV'
-    ]),
-    new LodashModuleReplacementPlugin({
-      cloning: true,
-      currying: true,
-      paths: true,
-      unicode: true
-    })
-  ],
-
-  resolve: {
-    extensions: [
-      '',
-      '.js'
-    ],
-
-    fallback: [
-      path.join(__dirname, 'src')
-    ],
-
-    root: __dirname
-  }
+  plugins: [new webpack.EnvironmentPlugin(['NODE_ENV'])],
 };
